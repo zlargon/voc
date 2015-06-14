@@ -42,5 +42,5 @@ if [ ! -f $word.wav ] ; then
 fi
 
 # play audio
-echo "play $word ..."
+echo "play '$word' ..."
 afplay $word.wav
