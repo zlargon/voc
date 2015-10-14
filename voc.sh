@@ -19,6 +19,15 @@ cd $path
 
 # check the word audio is exist or not
 word=$1
+
+# .mp3
+if [ -f $word.mp3 ] ; then
+    echo "play '$word' ..."
+    afplay $word.mp3
+    exit;
+fi
+
+# .wav
 if [ ! -f $word.wav ] ; then
     echo "Search the word '$word' from webster ..."
     audio=$(curl "$host/dictionary/$word" -s | grep "'$word'" | grep "au(" | awk -F'onclick="return ' '{print $2}' | awk -F';"' '{print $1}')
