@@ -8,10 +8,10 @@ google () {
 
     # get file name
     audio=$(echo $uri | awk -F\/ '{print $5}')
+    echo $audio
 
     # download mp3
     curl $host$uri -s > $audio
-    echo $audio
 }
 
 # check jq
