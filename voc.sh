@@ -1,13 +1,70 @@
 #!/bin/bash
-
-host="http://www.merriam-webster.com"
 path=~/webster
 
-# check input
-if [[ $# = 0 ]] ; then
-    echo "Usage: voc <word>"
-    exit;
-fi
+webster () {
+    word=$1
+    host="http://www.merriam-webster.com"
+    audio=$(curl "$host/dictionary/"$word -s | grep "'$word'" | grep "au(" | awk -F'onclick="return ' '{print $2}' | awk -F';"' '{print $1}')
+    if [[ $audio == "" ]] ; then
+        return
+    fi
+
+    # create query string
+    query=$(echo "$audio" | awk 'NR==1 {print $0}' | awk -F\' '{print "file="$2"&word="$4"&text="$6}')
+
+    # download the audio
+    curl $(curl "$host/audio.php?$query" -s | grep "embed" | awk -F\" '{print $2}') -s > $word.wav
+    echo $word.wav
+}
+
+yahoo () {
+    word=$1
+    uri="http://l.yimg.com/tn/dict/kh/v1/"
+    curl "http://tw.dictionary.search.yahoo.com/search?p="$word"&fr2=dict" -s | awk -F$uri '{print $2}' | awk -F'.mp3' '{print $1}' | while read mp3_id
+    do
+        if [[ $mp3_id == "" ]]; then
+            continue
+        fi
+
+        # download audio
+        curl $uri$mp3_id.mp3 -s > $word.mp3
+        echo $word.mp3
+        return
+    done
+}
+
+play () {
+    echo "play '$1' ..."
+    afplay $1
+    exit
+}
+
+main () {
+    word=$1
+
+    # check audio file
+    if [ -f $word.mp3 ]; then
+        play $word.mp3
+    elif [ -f $word.wav ]; then
+        play $word.wav
+    fi
+
+    # Webster
+    echo "Download '$word' from Webster ..."
+    audio=$(webster $word)
+    echo "audio = $audio"
+    if [[ $audio != "" ]]; then
+        play $audio
+    fi
+
+    # Yahoo
+    echo "Download '$word' from Yahoo ..."
+    audio=$(yahoo $word)
+    echo "audio = $audio"
+    if [[ $audio != "" ]]; then
+        play $audio
+    fi
+}
 
 # create webster folder
 if [ ! -d $path ] ; then
@@ -17,39 +74,25 @@ if [ ! -d $path ] ; then
 fi
 cd $path
 
-# check the word audio is exist or not
-word=$1
-
-# .mp3
-if [ -f $word.mp3 ] ; then
-    echo "play '$word' ..."
-    afplay $word.mp3
-    exit;
+# check jq
+if [[ $(which jq) == "" ]]; then
+    echo "command 'jq' is not found, please install it"
+    echo "https://stedolan.github.io/jq/"
+    exit
 fi
 
-# .wav
-if [ ! -f $word.wav ] ; then
-    echo "Search the word '$word' from webster ..."
-    audio=$(curl "$host/dictionary/$word" -s | grep "'$word'" | grep "au(" | awk -F'onclick="return ' '{print $2}' | awk -F';"' '{print $1}')
-    if [[ $audio == "" ]] ; then
-        echo "The word '$word' is not found"
-        exit;
-    fi
-
-    # show audio list with line number
-    echo "$audio" | awk '{print NR ". " $0}'
-    echo ""
-
-    # create query string
-    query=$(echo "$audio" | awk 'NR==1 {print $0}' | awk -F\' '{print "file="$2"&word="$4"&text="$6}')
-
-    # download the audio
-    echo "Download the word '$word' from webster ... ($query)"
-    curl $(curl "$host/audio.php?$query" -s | grep "embed" | awk -F\" '{print $2}') -s > $word.wav
-    echo "Download Success"
-    echo ""
+# check curl
+if [[ $(which curl) == "" ]]; then
+    echo "command 'curl' is not found, please install it"
+    echo "http://curl.haxx.se/"
+    exit
 fi
 
-# play audio
-echo "play '$word' ..."
-afplay $word.wav
+# check input
+if [[ $# = 0 ]] ; then
+    echo "Usage: voc <word>"
+    exit
+fi
+
+# run voc
+main $1
