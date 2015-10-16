@@ -74,13 +74,6 @@ if [ ! -d $path ] ; then
 fi
 cd $path
 
-# check jq
-if [[ $(which jq) == "" ]]; then
-    echo "command 'jq' is not found, please install it"
-    echo "https://stedolan.github.io/jq/"
-    exit
-fi
-
 # check curl
 if [[ $(which curl) == "" ]]; then
     echo "command 'curl' is not found, please install it"
