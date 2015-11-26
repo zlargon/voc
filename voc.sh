@@ -2,6 +2,7 @@
 word=$1
 path=~/vocabulary
 
+# 1. webster => wav
 webster () {
   word=$1
   host="http://www.merriam-webster.com"
@@ -18,6 +19,14 @@ webster () {
   echo $word.wav
 }
 
+# 2. voicetube => mp3
+voicetube() {
+  word=$1
+  curl "https://tw.voicetube.com/player/${word}.mp3" -s > ${word}.mp3
+  echo ${word}.mp3
+}
+
+# 3. yahoo => mp3
 yahoo () {
   word=$1
   uri="http://l.yimg.com/tn/dict/kh/v1/"
@@ -69,7 +78,7 @@ elif [ -f $word.wav ]; then
 fi
 
 # download audio from service list
-services=(webster yahoo)
+services=(webster voicetube yahoo)
 for serve in ${services[@]}; do
   echo "Download '${word}' from ${serve} ..."
   audio=$(${serve} $word)
