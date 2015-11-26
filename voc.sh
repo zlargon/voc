@@ -1,5 +1,6 @@
 #!/bin/bash
-path=~/webster
+word=$1
+path=~/vocabulary
 
 webster () {
   word=$1
@@ -39,36 +40,9 @@ play () {
   exit
 }
 
-main () {
-  word=$1
-
-  # check audio file
-  if [ -f $word.mp3 ]; then
-    play $word.mp3
-  elif [ -f $word.wav ]; then
-    play $word.wav
-  fi
-
-  # Webster
-  echo "Download '$word' from Webster ..."
-  audio=$(webster $word)
-  echo "audio = $audio"
-  if [[ $audio != "" ]]; then
-    play $audio
-  fi
-
-  # Yahoo
-  echo "Download '$word' from Yahoo ..."
-  audio=$(yahoo $word)
-  echo "audio = $audio"
-  if [[ $audio != "" ]]; then
-    play $audio
-  fi
-}
-
-# create webster folder
+# create vocabulary folder
 if [ ! -d $path ] ; then
-  echo "create webster folder ... $path/"
+  echo "create vocabulary folder ... $path/"
   echo ""
   mkdir -p $path
 fi
@@ -87,5 +61,21 @@ if [[ $# = 0 ]] ; then
   exit
 fi
 
-# run voc
-main $1
+# check audio file
+if [ -f $word.mp3 ]; then
+  play $word.mp3
+elif [ -f $word.wav ]; then
+  play $word.wav
+fi
+
+# download audio from service list
+services=(webster yahoo)
+for serve in ${services[@]}; do
+  echo "Download '${word}' from ${serve} ..."
+  audio=$(${serve} $word)
+
+  echo "audio = ${audio}"
+  if [[ $audio != "" ]]; then
+    play $audio
+  fi
+done
