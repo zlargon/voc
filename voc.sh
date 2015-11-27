@@ -22,8 +22,14 @@ webster () {
 # 2. voicetube => mp3
 voicetube() {
   word=$1
-  curl "https://tw.voicetube.com/player/${word}.mp3" -s > ${word}.mp3
-  echo ${word}.mp3
+  host="https://tw.voicetube.com"
+  for result in $(curl "${host}/videos/ajax_get_search/word?q=${word}" -s); do
+    if [[ $result == $word ]]; then
+      curl "${host}/player/${word}.mp3" -s > ${word}.mp3
+      echo ${word}.mp3
+      return
+    fi
+  done
 }
 
 # 3. yahoo => mp3
@@ -81,7 +87,7 @@ fi
 services=(webster voicetube yahoo)
 for serve in ${services[@]}; do
   echo "Download '${word}' from ${serve} ..."
-  audio=$(${serve} $word)
+  audio=$($serve $word)
 
   echo "audio = ${audio}"
   if [[ $audio != "" ]]; then
