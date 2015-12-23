@@ -1,25 +1,28 @@
 #!/usr/bin/env node
-var path    = require('path');
-var fs      = require('fs');
-var pkg     = require('./package.json');
-var config  = require('./config.json');
-var program = require('commander');
+var path      = require('path');
+var fs        = require('fs');
+var coroutine = require('co');
+var program   = require('commander');
+var exec      = require('child_process').execSync;
+var getAudio  = require('./src/getAudio');
+var config    = require('./config.json');
+var pkg       = require('./package.json');
 
 // Default Config
 var DEFAULT = {
   directory: path.resolve(process.env.HOME, 'vocabulary'),
-  audio_cli: 'afplay'
+  audio_cli: 'afplay' // Mac OS X default audio file player
 };
 
 
 // Command Line Interface
 program
   .usage('<words...>')
-  .option('-v, --version',     "output the version number",                                        version)
-  .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'",    setAudioCli)
-  .option('-d, --dir <path>',  "set the download directory. set defaults to " + DEFAULT.directory, setAudioDirectory)
-  .option('-l, --list',        "list all the configuration",                                       listConfig)
-  .option('-r, --reset',       "reset configuration to default",                                   resetConfig);
+  .option('-v, --version',     "output the version number",                                     version)
+  .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
+  .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
+  .option('-l, --list',        "list all the configuration",                                    listConfig)
+  .option('-r, --reset',       "reset configuration to default",                                resetConfig);
 
 
 function version() {
@@ -44,23 +47,52 @@ function listConfig() {
   }
 }
 
-
-/* Start */
-
-// init default configuration
+// 1. init default configuration
 if (config.directory === '') {
   resetConfig();
 }
 
-// parse command
+// 2. parse command
 program.parse(process.argv);
 
-// save configuration
-fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+// 3. save configuration
+fs.writeFileSync('./config.json', JSON.stringify(config, null, 2) + '\n');
 
-// create directory
+// 4. create directory
 try {
   fs.mkdirSync(config.directory);
 } catch(e) {
   if (e.code !== 'EEXIST') throw e;
 }
+
+// 5. get audios
+coroutine(function * () {
+  var audios = [];
+  for (var i = 0; i < program.args.length; i++) {
+    var word = program.args[i];
+    audios[i] = {
+      word: word,
+      path: null
+    };
+
+    try {
+      audios[i].path = yield getAudio(word, config.directory);
+    } catch (e) {
+      // audio is not found
+    }
+  }
+  return audios;
+})  // 6. play audios
+.then(function (audios) {
+  audios.forEach(function (audio) {
+    if (audio.path !== null) {
+      console.log("play '%s' ...", path.basename(audio.path));
+      exec(config.audio_cli + ' ' + audio.path);
+    } else {
+      console.log("'%s' is not found", audio.word);
+    }
+  });
+})
+.catch(function (e) {
+  console.log(e.stack);
+});
