@@ -65,6 +65,11 @@ try {
   if (e.code !== 'EEXIST') throw e;
 }
 
+// show help info if input is empty.
+if (process.argv.length <= 2) {
+  program.help();
+}
+
 // 5. get audios
 coroutine(function * () {
   var audios = [];
