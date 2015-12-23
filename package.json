@@ -1,10 +1,14 @@
 {
-  "name": "voc",
+  "name": "voc-cli",
   "version": "1.0.0",
-  "description": "play vocabularies audio by command line",
+  "description": "download and play English vocabularies' audio by command line",
   "main": "index.js",
+  "preferGlobal": "true",
+  "bin": {
+    "voc": "index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
