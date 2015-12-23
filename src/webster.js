@@ -2,7 +2,7 @@ var Promise = require('promise');
 var fetch   = require('node-fetch');
 var cheerio = require('cheerio');
 
-module.exports = function (word) {
+module.exports = function webster (word) {
   if (typeof word !== 'string') {
     return Promise.reject(new TypeError());
   }

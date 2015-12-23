@@ -1,7 +1,7 @@
 var Promise = require('promise');
 var fetch = require('node-fetch');
 
-module.exports = function (word) {
+module.exports = function voicetube (word) {
   const HOST = 'https://tw.voicetube.com';
   if (typeof word !== 'string') {
     return Promise.reject(new TypeError());

@@ -2,7 +2,7 @@ var Promise = require('promise');
 var fetch   = require('node-fetch');
 var cheerio = require('cheerio');
 
-module.exports = function (word) {
+module.exports = function yahoo (word) {
   var HOST = 'http://tw.dictionary.search.yahoo.com';
   if (typeof word !== 'string') {
     return Promise.reject(new TypeError());
