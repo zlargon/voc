@@ -18,16 +18,11 @@ var DEFAULT = {
 // Command Line Interface
 program
   .usage('<words...>')
-  .option('-v, --version',     "output the version number",                                     version)
+  .version(pkg.version)
   .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
   .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
   .option('-l, --list',        "list all the configuration",                                    listConfig)
   .option('-r, --reset',       "reset configuration to default",                                resetConfig);
-
-
-function version() {
-  console.log(pkg.version);
-}
 
 function resetConfig() {
   config = DEFAULT;

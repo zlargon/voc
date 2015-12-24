@@ -8,12 +8,12 @@ English online dictionary website:
  - [Webster](http://www.merriam-webster.com/)
  - [VoiceTube](https://tw.voicetube.com/definition/)
  - [Yahoo](http://tw.dictionary.search.yahoo.com)
- - ~~Google~~ (API has been changed)
+ - _Google_ (API has been changed)
 
 ## Installation
 
 ```
-$ npm install voc-cli -g
+$ npm install -g voc-cli
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ Usage: voc <words...>
 Options:
 
   -h, --help         output usage information
-  -v, --version      output the version number
+  -V, --version      output the version number
   -a, --audio <cli>  the command line to play .mp3 audio. set defaults to 'afplay'
   -d, --dir <path>   set the download directory. set defaults to '~/vocabulary'
   -l, --list         list all the configuration
