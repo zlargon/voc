@@ -83,7 +83,9 @@ coroutine(function * () {
     try {
       audios[i].path = yield getAudio(word, config.directory);
     } catch (e) {
-      // audio is not found
+      if (e.code !== 'ENOENT') {
+        throw e;
+      }
     }
   }
   return audios;

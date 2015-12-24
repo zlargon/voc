@@ -1,5 +1,7 @@
 var fs        = require('fs');
+var urlParse  = require('url').parse;
 var http      = require('http');
+var https     = require('https');
 var path      = require('path');
 var Promise   = require('promise');
 var coroutine = require('co');
@@ -27,20 +29,41 @@ function isFileExist (filePath) {
 
 function downloadFile (url, dest) {
   return new Promise(function (resolve, reject) {
-    var file = fs.createWriteStream(dest);
+    var info = urlParse(url);
+    var httpClient = info.protocol === 'https:' ? https : http;
+    var options = {
+      host: info.host,
+      path: info.path,
+      headers: {
+        'user-agent': 'voc'
+      }
+    };
 
-    http.get(url, function(response) {
-      response.pipe(file);
+    httpClient.get(options, function(res) {
+      // check status code
+      if (res.statusCode !== 200) {
+        var msg = url + ', status code ' + res.statusCode + '(' + res.statusMessage + ')';
+        reject(new Error(msg));
+        return;
+      }
+
+      var file = fs.createWriteStream(dest);
       file.on('finish', function() {
         // close() is async, call resolve after close completes.
         file.close(resolve);
       });
+      file.on('error', function (err) {
+        // Delete the file async. (But we don't check the result)
+        fs.unlink(dest);
+        reject(err);
+      });
+
+      res.pipe(file);
     })
     .on('error', function(err) {
-      // Delete the file async. (But we don't check the result)
-      fs.unlink(dest);
       reject(err);
-    });
+    })
+    .end();
   });
 }
 
@@ -73,7 +96,9 @@ module.exports = function getAudio (word, directory) {
 
     // word is not found from all the services
     if (url === null) {
-      throw new Error(word + ' is not found');
+      var err = new Error(word + ' is not found');
+      err.code = 'ENOENT';
+      throw err;
     }
 
     // 3. download word's audio
