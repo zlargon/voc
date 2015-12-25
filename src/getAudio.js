@@ -12,18 +12,35 @@ var Service = {
   yahoo:     require('./yahoo')
 };
 
-function isFileExist (filePath) {
-  return new Promise(function (resolve, reject) {
+function getExistAudio (word, directory) {
+  var ext = ['.wav', '.mp3'];
+  for (var i = 0; i < ext.length; i++) {
+    var audio = path.resolve(directory, word + ext[i]);
+
     try {
-      fs.statSync(filePath);
-      resolve(true);
+      fs.statSync(audio);
+      return audio;
     } catch (e) {
-      if (e.code === 'ENOENT') {
-        resolve(false);
-      } else {
+      if (e.code !== 'ENOENT') {
         throw e;
       }
     }
+  }
+  return null;
+}
+
+function downloadAudio (word, directory, serviceName) {
+  return coroutine(function * () {
+    var serv = Service[serviceName];
+    if (!serv) throw new Error("Unknown Service '" + serviceName + "'");
+
+    var url = yield serv(word);
+    var audioName = word + path.extname(url);           // audio.mp3 or audio.wav
+    var audioDest = path.resolve(directory, audioName); // audio destination
+
+    yield downloadFile(url, audioDest);
+    console.log("Download '%s' from %s ...", audioName, serviceName);
+    return audioDest;
   });
 }
 
@@ -69,44 +86,32 @@ function downloadFile (url, dest) {
 
 module.exports = function getAudio (word, directory) {
   return coroutine(function * () {
-    word = word.toLowerCase();  // throw error if word is not string
-
-    // 1. check audio is exist or not
-    var audios = [
-      path.resolve(directory, word + '.wav'),
-      path.resolve(directory, word + '.mp3')
-    ];
-    for (var i = 0; i < audios.length; i++) {
-      if (yield isFileExist(audios[i])) {
-        return audios[i];
-      }
+    try {
+      word = word.toLowerCase();
+    } catch (e) {
+      throw new TypeError('word should be a string');
     }
 
-    // 2. audio is not exist, search word's audio URL
-    var url = null, servName = null;
-    for (servName in Service) {
+    // check audio is exist or not
+    var audio = getExistAudio(word, directory);
+    if (audio !== null) {
+      return audio;
+    }
+
+    // audio is not exist, search audio URL of the word
+    for (var serv in Service) {
       try {
-        url = yield Service[servName](word);
-        break;
+        return yield downloadAudio(word, directory, serv);
       } catch (e) {
-        // get url failed
+        if (e.code !== 'ENOENT') {
+          throw e;
+        }
       }
     }
 
-    // word is not found from all the services
-    if (url === null) {
-      var err = new Error(word + ' is not found');
-      err.code = 'ENOENT';
-      throw err;
-    }
-
-    // 3. download word's audio
-    var audioName = word + path.extname(url);           // audio.mp3 or audio.wav
-    var audioDest = path.resolve(directory, audioName); // audio destination
-
-    yield downloadFile(url, audioDest);
-    console.log("Download '%s' from %s ...", audioName, servName);
-
-    return audioDest;
+    // audio is not found
+    var err = new Error(word + ' is not found');
+    err.code = 'ENOENT';
+    throw err;
   });
 }
