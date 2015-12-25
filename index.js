@@ -19,6 +19,9 @@ var DEFAULT = {
 program
   .usage('<words...>')
   .version(pkg.version)
+  .option('-w, --webster',     "force download audio from webster")
+  .option('-v, --voicetube',   "force download audio from voicetube")
+  .option('-y, --yahoo',       "force download audio from yahoo")
   .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
   .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
   .option('-l, --list',        "list all the configuration",                                    listConfig)
@@ -65,8 +68,13 @@ if (process.argv.length <= 2) {
   program.help();
 }
 
-// 5. get audios
+// 5. get and play audios
 coroutine(function * () {
+  var service = null;
+  if (program.yahoo)     service = 'yahoo';
+  if (program.voicetube) service = 'voicetube';
+  if (program.webster)   service = 'webster';
+
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
     var word = program.args[i];
@@ -76,22 +84,23 @@ coroutine(function * () {
     };
 
     try {
-      audios[i].path = yield getAudio(word, config.directory);
+      audios[i].path = yield getAudio(word, config.directory, service);
     } catch (e) {
       if (e.code !== 'ENOENT') {
         throw e;
       }
     }
   }
-  return audios;
-})  // 6. play audios
-.then(function (audios) {
+
+  // play audios
   audios.forEach(function (audio) {
     if (audio.path !== null) {
       console.log("play '%s' ...", path.basename(audio.path));
       exec(config.audio_cli + ' ' + audio.path);
     } else {
-      console.log("'%s' is not found", audio.word);
+      var msg = "'" + audio.word + "' is not found";
+      if (service) msg += " from " + service;
+      console.log(msg);
     }
   });
 })

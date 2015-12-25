@@ -84,12 +84,17 @@ function downloadFile (url, dest) {
   });
 }
 
-module.exports = function getAudio (word, directory) {
+module.exports = function getAudio (word, directory, service) {
   return coroutine(function * () {
     try {
       word = word.toLowerCase();
     } catch (e) {
       throw new TypeError('word should be a string');
+    }
+
+    // force to download audio from particular service
+    if (service) {
+      return yield downloadAudio(word, directory, service);
     }
 
     // check audio is exist or not

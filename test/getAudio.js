@@ -44,6 +44,20 @@ describe('Get Audio', function() {
     );
   });
 
+  it('testing (from webster)', function () {
+    this.timeout(10000);
+    var word = 'testing';
+    return expect(getAudio(word, __dirname, 'webster')).to.eventually.be.rejected;
+  });
+
+  it('testing (from voicetube)', function () {
+    this.timeout(10000);
+    var word = 'testing';
+    return expect(getAudio(word, __dirname, 'voicetube')).to.eventually.equal(
+      path.resolve(__dirname, 'testing.mp3')
+    );
+  });
+
   it('askdjalksjdl', function () {
     this.timeout(10000);
     var word = 'askdjalksjdl';
