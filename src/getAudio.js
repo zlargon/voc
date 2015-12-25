@@ -6,11 +6,11 @@ var path      = require('path');
 var Promise   = require('promise');
 var coroutine = require('co');
 
-var services = [
-  require('./webster'),
-  require('./voicetube'),
-  require('./yahoo')
-];
+var Service = {
+  webster:   require('./webster'),
+  voicetube: require('./voicetube'),
+  yahoo:     require('./yahoo')
+};
 
 function isFileExist (filePath) {
   return new Promise(function (resolve, reject) {
@@ -83,11 +83,10 @@ module.exports = function getAudio (word, directory) {
     }
 
     // 2. audio is not exist, search word's audio URL
-    var url = null, serv = null;
-    for (var i = 0; i < services.length; i++) {
-      serv = services[i];
+    var url = null, servName = null;
+    for (servName in Service) {
       try {
-        url = yield serv(word);
+        url = yield Service[servName](word);
         break;
       } catch (e) {
         // get url failed
@@ -106,7 +105,7 @@ module.exports = function getAudio (word, directory) {
     var audioDest = path.resolve(directory, audioName); // audio destination
 
     yield downloadFile(url, audioDest);
-    console.log("Download '%s' from %s ...", audioName, serv.name);
+    console.log("Download '%s' from %s ...", audioName, servName);
 
     return audioDest;
   });
