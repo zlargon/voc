@@ -1,40 +1,52 @@
-var Promise = require('promise');
-var fetch   = require('node-fetch');
-var cheerio = require('cheerio');
+var coroutine = require('co');
+var fetch     = require('node-fetch');
+var cheerio   = require('cheerio');
 
 module.exports = function webster (word) {
-  if (typeof word !== 'string') {
-    return Promise.reject(new TypeError());
-  }
+  return coroutine(function * () {
+    try {
+      word = word.toLowerCase();
+    } catch (e) {
+      throw new TypeError('word should be a string');
+    }
 
-  word = word.toLowerCase();
-  return fetch('http://www.merriam-webster.com/dictionary/' + word)
-    .then(function(res) { return res.text(); })
-    .then(function(html) {
-      var map = {};
-      var list = [];
+    var url = 'http://www.merriam-webster.com/dictionary/' + word;
+    var res = yield fetch(url);
+    if (res.status !== 200) {
+      var err = new Error(word + ' is not found from webster');
+      err.code = 'ENOENT';
+      throw err;
+    }
 
-      var $ = cheerio.load(html);
-      $('.word-and-pronunciation .play-pron').each(function (index, element) {
-        var ele  = $(element);
-        var file = ele.attr('data-file');
+    var html = yield res.text();
+    var $ = cheerio.load(html);
 
-        if (map.hasOwnProperty(file) === false) {
-          map[file] = true;
-          list.push({
-            file: file,
-            lang: ele.attr('data-lang'),
-            dir: ele.attr('data-dir')
-          });
-        }
-      });
+    var map = {};
+    var list = [];
+    $('.word-and-pronunciation .play-pron').each(function (index, element) {
+      var ele  = $(element);
+      var file = ele.attr('data-file');
 
-      return list;
-    })
-    .then(list => {
-      var file = list[0].file;
-      var lang = list[0].lang;
-      var dir  = list[0].dir;
-      return 'http://media.merriam-webster.com/audio/prons/' + lang.replace(/_/g, '/') + '/mp3/' + dir + '/' + file + '.mp3';
+      if (map.hasOwnProperty(file) === false) {
+        map[file] = true;
+        list.push({
+          file: file,
+          lang: ele.attr('data-lang'),
+          dir: ele.attr('data-dir')
+        });
+      }
     });
+
+    if (list.length === 0) {
+      var err = new Error(word + ' is not found from webster');
+      err.code = 'ENOENT';
+      throw err;
+    }
+
+    // return the first audio from list
+    var file = list[0].file;
+    var lang = list[0].lang;
+    var dir  = list[0].dir;
+    return 'http://media.merriam-webster.com/audio/prons/' + lang.replace(/_/g, '/') + '/mp3/' + dir + '/' + file + '.mp3';
+  });
 }
