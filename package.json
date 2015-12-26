@@ -1,6 +1,6 @@
 {
   "name": "voc-cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "download and play English vocabularies' audio by command line",
   "main": "index.js",
   "preferGlobal": "true",
@@ -14,6 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/zlargon/voc.git"
   },
+  "keywords": [
+    "text-to-speech",
+    "google-tts",
+    "vocabulary",
+    "webster"
+  ],
   "author": "zlargon",
   "license": "MIT",
   "bugs": {
