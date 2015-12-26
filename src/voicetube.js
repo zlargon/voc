@@ -3,14 +3,14 @@ var fetch     = require('node-fetch');
 
 module.exports = function voicetube (word) {
   return coroutine(function * () {
-    try {
-      word = word.toLowerCase();
-    } catch (e) {
-      throw new TypeError('word should be a string');
+    if (typeof word !== 'string' || word.length === 0) {
+      throw TypeError('word should be a string');
     }
 
-    var HOST = 'https://tw.voicetube.com';
+    // convert to lower case
+    word = word.toLowerCase();
 
+    var HOST = 'https://tw.voicetube.com';
     var url = HOST + '/videos/ajax_get_search/word?q=' + word;
     var res = yield fetch(url);
     if (res.status !== 200) {

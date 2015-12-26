@@ -86,11 +86,12 @@ function downloadFile (url, dest) {
 
 module.exports = function getAudio (word, directory, service) {
   return coroutine(function * () {
-    try {
-      word = word.toLowerCase();
-    } catch (e) {
-      throw new TypeError('word should be a string');
+    if (typeof word !== 'string' || word.length === 0) {
+      throw TypeError('word should be a string');
     }
+
+    // convert to lower case
+    word = word.toLowerCase();
 
     // force to download audio from particular service
     if (service) {

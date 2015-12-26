@@ -4,11 +4,12 @@ var cheerio   = require('cheerio');
 
 module.exports = function yahoo (word) {
   return coroutine(function * () {
-    try {
-      word = word.toLowerCase();
-    } catch (e) {
-      throw new TypeError('word should be a string');
+    if (typeof word !== 'string' || word.length === 0) {
+      throw TypeError('word should be a string');
     }
+
+    // convert to lower case
+    word = word.toLowerCase();
 
     var url = 'http://tw.dictionary.search.yahoo.com/search?p=' + word + '&fr2=dict';
     var res = yield fetch(url);

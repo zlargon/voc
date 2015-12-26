@@ -4,11 +4,12 @@ var cheerio   = require('cheerio');
 
 module.exports = function webster (word) {
   return coroutine(function * () {
-    try {
-      word = word.toLowerCase();
-    } catch (e) {
-      throw new TypeError('word should be a string');
+    if (typeof word !== 'string' || word.length === 0) {
+      throw TypeError('word should be a string');
     }
+
+    // convert to lower case
+    word = word.toLowerCase();
 
     var url = 'http://www.merriam-webster.com/dictionary/' + word;
     var res = yield fetch(url);

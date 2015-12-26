@@ -67,19 +67,25 @@ describe('Get Audio', function() {
   it('(null)', function () {
     this.timeout(100);
     var word = null;
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
+    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (number)', function () {
     this.timeout(100);
     var word = 123;
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
+    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (string)', function () {
     this.timeout(10000);
     var word = '123';
     return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
+  });
+
+  it('(Empty String)', function () {
+    this.timeout(10000);
+    var word = '';
+    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
   });
 
 });

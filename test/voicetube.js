@@ -42,4 +42,9 @@ describe('VoiceTube', function() {
     return expect(voicetube(word)).to.eventually.be.rejected;
   });
 
+  it('(Empty String)', function () {
+    var word = '';
+    return expect(voicetube(word)).to.eventually.be.rejectedWith(TypeError);
+  });
+
 });

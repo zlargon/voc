@@ -48,4 +48,9 @@ describe('Webster', function() {
     return expect(webster(word)).to.eventually.be.rejected;
   });
 
+  it('(Empty String)', function () {
+    var word = '';
+    return expect(webster(word)).to.eventually.be.rejectedWith(TypeError);
+  });
+
 });

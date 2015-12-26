@@ -42,4 +42,9 @@ describe('Yahoo Dictionary', function() {
     return expect(yahoo(word)).to.eventually.be.rejected;
   });
 
+  it('(Empty String)', function () {
+    var word = '';
+    return expect(yahoo(word)).to.eventually.be.rejectedWith(TypeError);
+  });
+
 });
