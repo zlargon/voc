@@ -22,6 +22,7 @@ program
   .option('-w, --webster',     "force download audio from webster")
   .option('-v, --voicetube',   "force download audio from voicetube")
   .option('-y, --yahoo',       "force download audio from yahoo")
+  .option('-g, --google',      "force download audio from google")
   .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
   .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
   .option('-l, --list',        "list all the configuration",                                    listConfig)
@@ -74,6 +75,7 @@ coroutine(function * () {
   if (program.yahoo)     service = 'yahoo';
   if (program.voicetube) service = 'voicetube';
   if (program.webster)   service = 'webster';
+  if (program.google)    service = 'google';
 
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
@@ -96,7 +98,7 @@ coroutine(function * () {
   audios.forEach(function (audio) {
     if (audio.path !== null) {
       console.log("play '%s' ...", path.basename(audio.path));
-      exec(config.audio_cli + ' ' + audio.path);
+      exec(config.audio_cli + ' "' + audio.path + '"');
     } else {
       var msg = "'" + audio.word + "' is not found";
       if (service) msg += " from " + service;

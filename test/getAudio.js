@@ -58,6 +58,22 @@ describe('Get Audio', function() {
     );
   });
 
+  it('testing (from google)', function () {
+    this.timeout(10000);
+    var word = 'testing';
+    return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
+      path.resolve(__dirname, 'testing.mp3')
+    );
+  });
+
+  it('Hello_World (from google)', function () {
+    this.timeout(10000);
+    var word = 'Hello_World';
+    return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
+      path.resolve(__dirname, 'hello_world.mp3')
+    );
+  });
+
   it('askdjalksjdl', function () {
     this.timeout(10000);
     var word = 'askdjalksjdl';

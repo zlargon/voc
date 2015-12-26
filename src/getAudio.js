@@ -5,6 +5,7 @@ var https     = require('https');
 var path      = require('path');
 var Promise   = require('promise');
 var coroutine = require('co');
+var google    = require('./google');
 
 var Service = {
   webster:   require('./webster'),
@@ -31,11 +32,12 @@ function getExistAudio (word, directory) {
 
 function downloadAudio (word, directory, serviceName) {
   return coroutine(function * () {
-    var serv = Service[serviceName];
+    var serv = serviceName === 'google' ? google : Service[serviceName];
     if (!serv) throw new Error("Unknown Service '" + serviceName + "'");
 
     var url = yield serv(word);
-    var audioName = word + path.extname(url);           // audio.mp3 or audio.wav
+    var ext = serviceName === 'google' ? '.mp3' : path.extname(url);
+    var audioName = word + ext;                         // audio.mp3 or audio.wav
     var audioDest = path.resolve(directory, audioName); // audio destination
 
     yield downloadFile(url, audioDest);
