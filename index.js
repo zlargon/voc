@@ -55,7 +55,10 @@ if (config.directory === '') {
 program.parse(process.argv);
 
 // 3. save configuration
-fs.writeFileSync('./config.json', JSON.stringify(config, null, 2) + '\n');
+fs.writeFileSync(
+  path.resolve(__dirname, 'config.json'),
+  JSON.stringify(config, null, 2) + '\n'
+);
 
 // 4. create directory
 try {
