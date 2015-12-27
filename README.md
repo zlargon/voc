@@ -40,7 +40,7 @@ Options:
 ```bash
 $ voc hello                # download hello.mp3
 $ voc hello world          # download both hello.mp3, world.mp3
-$ voc -g hello_world       # download sentence hello_world.mp3 from google service
+$ voc hello_world -g       # download sentence hello_world.mp3 from google service
 ```
 
 ## Configuration

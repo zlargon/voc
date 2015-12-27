@@ -32,6 +32,12 @@ describe('google', function() {
     return expect(google(word)).to.eventually.match(/textlen=11/);
   });
 
+  it('how_are_you', function () {
+    var word = 'how_are_you';
+    return expect(google(word)).to.eventually.match(/q=how%20are%20you/);
+    return expect(google(word)).to.eventually.match(/textlen=11/);
+  });
+
   it('123', function () {
     var word = '123';
     return expect(google(word)).to.eventually.match(/q=123/);

@@ -16,8 +16,7 @@ function token (str, key) {
 
   var num = key;
   for (var i = 0; i < str.length; i++) {
-    var code = str.charCodeAt(i);
-    num = RL(num + code, '+-a^+6');
+    num = RL(num + str.charCodeAt(i), '+-a^+6');
   }
   num = RL(num, '+-3^+b+-f');
   0 > num && (num = (num & 2147483647) + 2147483648);
@@ -33,7 +32,7 @@ module.exports = function google (word) {
     }
 
     // replace '_' to ' ', and convert to lower case
-    word = word.replace(/_/, ' ').toLowerCase();
+    word = word.replace(/_/g, ' ').toLowerCase();
 
     var HOST = 'https://translate.google.com';
     var res = yield fetch(HOST);
