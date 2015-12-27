@@ -14,8 +14,41 @@ var DEFAULT = {
   audio_cli: 'afplay' // Mac OS X default audio file player
 };
 
+function list () {
+  for (var key in config) {
+    console.log('%s: "%s"', key, config[key]);
+  }
+}
 
-// Command Line Interface
+function save () {
+  fs.writeFileSync(
+    path.resolve(__dirname, 'config.json'),
+    JSON.stringify(config, null, 2) + '\n'
+  );
+}
+
+function reset () {
+  config = DEFAULT;
+  save();
+}
+
+function setAudioCli (cli) {
+  config.audio_cli = cli;
+  save();
+}
+
+function setAudioDirectory (path) {
+  config.directory = path;
+  save();
+}
+
+
+// 1. init config
+if (config.directory === '') {
+  reset();
+}
+
+// 2. parse command
 program
   .usage('<words...>')
   .version(pkg.version)
@@ -25,54 +58,23 @@ program
   .option('-g, --google',      "force download audio from google")
   .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
   .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
-  .option('-l, --list',        "list all the configuration",                                    listConfig)
-  .option('-r, --reset',       "reset configuration to default",                                resetConfig);
+  .option('-l, --list',        "list all the configuration",                                    list)
+  .option('-r, --reset',       "reset configuration to default",                                reset)
+  .parse(process.argv);
 
-function resetConfig() {
-  config = DEFAULT;
+// show help info if input is empty
+if (process.argv.length <= 2) {
+  program.help();
 }
 
-function setAudioCli(cli) {
-  config.audio_cli = cli;
-}
-
-function setAudioDirectory(path) {
-  config.directory = path;
-}
-
-function listConfig() {
-  for (var key in config) {
-    console.log('%s: "%s"', key, config[key]);
-  }
-}
-
-// 1. init default configuration
-if (config.directory === '') {
-  resetConfig();
-}
-
-// 2. parse command
-program.parse(process.argv);
-
-// 3. save configuration
-fs.writeFileSync(
-  path.resolve(__dirname, 'config.json'),
-  JSON.stringify(config, null, 2) + '\n'
-);
-
-// 4. create directory
+// 3. create directory
 try {
   fs.mkdirSync(config.directory);
 } catch(e) {
   if (e.code !== 'EEXIST') throw e;
 }
 
-// show help info if input is empty.
-if (process.argv.length <= 2) {
-  program.help();
-}
-
-// 5. get and play audios
+// 4. get and play audio
 coroutine(function * () {
   var service = null;
   if (program.yahoo)     service = 'yahoo';
@@ -97,7 +99,7 @@ coroutine(function * () {
     }
   }
 
-  // play audios
+  // play audio
   audios.forEach(function (audio) {
     if (audio.path !== null) {
       console.log("play '%s' ...", path.basename(audio.path));
