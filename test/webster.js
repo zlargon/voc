@@ -24,6 +24,14 @@ describe('Webster', function() {
     );
   });
 
+  it('affiliate', function () {
+    this.timeout(10000);
+    var word = 'affiliate';
+    return expect(webster(word)).to.eventually.equal(
+      'http://media.merriam-webster.com/audio/prons/en/us/mp3/a/affili01.mp3'
+    );
+  });
+
   it('askdjalksjdl', function () {
     this.timeout(10000);
     var word = 'askdjalksjdl';
