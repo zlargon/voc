@@ -1,4 +1,5 @@
 var fs        = require('fs');
+var util      = require('util');
 var urlParse  = require('url').parse;
 var http      = require('http');
 var https     = require('https');
@@ -33,7 +34,7 @@ function getExistAudio (word, directory) {
 function downloadAudio (word, directory, serviceName) {
   return coroutine(function * () {
     var serv = serviceName === 'google' ? google : Service[serviceName];
-    if (!serv) throw new Error("Unknown Service '" + serviceName + "'");
+    if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
     var url = yield serv(word);
     var ext = serviceName === 'google' ? '.mp3' : path.extname(url);
@@ -61,7 +62,7 @@ function downloadFile (url, dest) {
     httpClient.get(options, function(res) {
       // check status code
       if (res.statusCode !== 200) {
-        var msg = url + ', status code ' + res.statusCode + '(' + res.statusMessage + ')';
+        var msg = util.format('request to %s failed, status code = %d (%s)', url, res.statusCode, res.statusMessage);
         reject(new Error(msg));
         return;
       }

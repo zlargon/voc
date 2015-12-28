@@ -1,3 +1,4 @@
+var util      = require('util');
 var coroutine = require('co');
 var fetch     = require('node-fetch');
 var cheerio   = require('cheerio');
@@ -16,7 +17,8 @@ module.exports = function yahoo (word) {
       timeout: 10 * 1000
     });
     if (res.status !== 200) {
-      throw new Error('request to ' + url + ' failed, status code = ' + res.status + ' (' + res.statusText + ')');
+      var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
+      throw new Error(msg);
     }
 
     var html = yield res.text();

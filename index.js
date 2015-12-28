@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var path      = require('path');
+var util      = require('util');
 var fs        = require('fs');
 var coroutine = require('co');
 var program   = require('commander');
@@ -103,11 +104,10 @@ coroutine(function * () {
   audios.forEach(function (audio) {
     if (audio.path !== null) {
       console.log("play '%s' ...", path.basename(audio.path));
-      exec(config.audio_cli + ' "' + audio.path + '"');
+      var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
+      exec(cmd);
     } else {
-      var msg = "'" + audio.word + "' is not found";
-      if (service) msg += " from " + service;
-      console.log(msg);
+      console.log("'%s' is not found%s", audio.word, service ? ' from ' + service : '');
     }
   });
 })
