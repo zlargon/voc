@@ -12,7 +12,9 @@ module.exports = function yahoo (word) {
     word = word.toLowerCase();
 
     var url = 'http://tw.dictionary.search.yahoo.com/search?p=' + word + '&fr2=dict';
-    var res = yield fetch(url);
+    var res = yield fetch(url, {
+      timeout: 10 * 1000
+    });
     if (res.status !== 200) {
       throw new Error('request to ' + url + ' failed, status code = ' + res.status + ' (' + res.statusText + ')');
     }

@@ -12,7 +12,9 @@ module.exports = function voicetube (word) {
 
     var HOST = 'https://tw.voicetube.com';
     var url = HOST + '/videos/ajax_get_search/word?q=' + word;
-    var res = yield fetch(url);
+    var res = yield fetch(url, {
+      timeout: 10 * 1000
+    });
     if (res.status !== 200) {
       throw new Error('request to ' + url + ' failed, status code = ' + res.status + ' (' + res.statusText + ')');
     }

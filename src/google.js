@@ -35,7 +35,9 @@ module.exports = function google (word) {
     word = word.replace(/_/g, ' ').toLowerCase();
 
     var HOST = 'https://translate.google.com';
-    var res = yield fetch(HOST);
+    var res = yield fetch(HOST, {
+      timeout: 10 * 1000
+    });
     if (res.status !== 200) {
       throw new Error('request to ' + url + ' failed, status code = ' + res.status + ' (' + res.statusText + ')');
     }
