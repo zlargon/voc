@@ -26,6 +26,7 @@ function save () {
     path.resolve(__dirname, 'config.json'),
     JSON.stringify(config, null, 2) + '\n'
   );
+  list();
 }
 
 function reset () {

@@ -15,7 +15,7 @@ var Service = {
 };
 
 function getExistAudio (word, directory) {
-  var ext = ['.wav', '.mp3'];
+  var ext = ['.mp3', '.wav'];
   for (var i = 0; i < ext.length; i++) {
     var audio = path.resolve(directory, word + ext[i]);
 
