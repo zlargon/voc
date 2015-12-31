@@ -9,8 +9,8 @@ module.exports = function yahoo (word) {
       throw TypeError('word should be a string');
     }
 
-    // convert to lower case
-    word = word.toLowerCase();
+    // replace '_' to ' ', and convert to lower case
+    word = word.replace(/_/g, ' ').toLowerCase();
 
     var url = 'http://tw.dictionary.search.yahoo.com/search?p=' + word + '&fr2=dict';
     var res = yield fetch(url, {

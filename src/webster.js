@@ -9,8 +9,8 @@ module.exports = function webster (word) {
       throw TypeError('word should be a string');
     }
 
-    // convert to lower case
-    word = word.toLowerCase();
+    // replace '_' to ' ', and convert to lower case
+    word = word.replace(/_/g, ' ').toLowerCase();
 
     var url = 'http://www.merriam-webster.com/dictionary/' + word;
     var res = yield fetch(url, {

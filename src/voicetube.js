@@ -8,8 +8,8 @@ module.exports = function voicetube (word) {
       throw TypeError('word should be a string');
     }
 
-    // convert to lower case
-    word = word.toLowerCase();
+    // replace '_' to ' ', and convert to lower case
+    word = word.replace(/_/g, ' ').toLowerCase();
 
     var HOST = 'https://tw.voicetube.com';
     var url = HOST + '/videos/ajax_get_search/word?q=' + word;
