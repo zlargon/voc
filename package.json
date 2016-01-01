@@ -3,6 +3,14 @@
   "version": "1.2.3",
   "description": "download and play English vocabularies' audio by command line",
   "main": "index.js",
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "engines": {
+    "iojs": ">= 1.0.0",
+    "node": ">= 0.12.0"
+  },
   "preferGlobal": "true",
   "bin": {
     "voc": "index.js"
