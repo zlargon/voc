@@ -1,6 +1,6 @@
 {
   "name": "voc-cli",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "download and play English vocabularies' audio by command line",
   "main": "index.js",
   "os": [
