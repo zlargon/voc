@@ -4,7 +4,6 @@ var urlParse  = require('url').parse;
 var http      = require('http');
 var https     = require('https');
 var path      = require('path');
-var Promise   = require('promise');
 var coroutine = require('co');
 var google    = require('./google');
 

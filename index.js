@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --harmony
 var path      = require('path');
 var util      = require('util');
 var fs        = require('fs');
