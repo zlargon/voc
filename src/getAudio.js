@@ -5,12 +5,28 @@ var http      = require('http');
 var https     = require('https');
 var path      = require('path');
 var coroutine = require('co');
-var google    = require('./google');
 
 var Service = {
-  webster:   require('./webster'),
-  voicetube: require('./voicetube'),
-  yahoo:     require('./yahoo')
+  webster: {
+    type: 'dic',
+    getUrl: require('./webster')
+  },
+
+  voicetube: {
+    type: 'dic',
+    getUrl: require('./voicetube')
+  },
+
+  yahoo: {
+    type: 'dic',
+    getUrl: require('./yahoo')
+  },
+
+  google: {
+    type: 'tts',
+    getUrl: require('./google'),
+    ext: '.mp3'
+  }
 };
 
 function getExistAudio (word, directory) {
@@ -32,11 +48,11 @@ function getExistAudio (word, directory) {
 
 function downloadAudio (word, directory, serviceName) {
   return coroutine(function * () {
-    var serv = serviceName === 'google' ? google : Service[serviceName];
+    var serv = Service[serviceName];
     if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
-    var url = yield serv(word);
-    var ext = serviceName === 'google' ? '.mp3' : path.extname(url);
+    var url = yield serv.getUrl(word);
+    var ext = serv.ext || path.extname(url);
     var audioName = word + ext;                         // audio.mp3 or audio.wav
     var audioDest = path.resolve(directory, audioName); // audio destination
 
@@ -108,6 +124,13 @@ module.exports = function getAudio (word, directory, service) {
 
     // audio is not exist, search audio URL of the word
     for (var serv in Service) {
+
+      // download by 'Dictionary' only,
+      // because it can always download audio from 'TTS' successfully even the words are misspell
+      if (Service[serv].type !== 'dic') {
+        continue;
+      }
+
       try {
         return yield downloadAudio(word, directory, serv);
       } catch (e) {
