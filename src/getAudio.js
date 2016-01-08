@@ -12,11 +12,6 @@ var Service = {
     getUrl: require('./webster')
   },
 
-  voicetube: {
-    type: 'dic',
-    getUrl: require('./voicetube')
-  },
-
   yahoo: {
     type: 'dic',
     getUrl: require('./yahoo')

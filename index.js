@@ -55,7 +55,6 @@ program
   .usage('<words...>')
   .version(pkg.version)
   .option('-w, --webster',     "force download audio from webster")
-  .option('-v, --voicetube',   "force download audio from voicetube")
   .option('-y, --yahoo',       "force download audio from yahoo")
   .option('-g, --google',      "force download audio from google")
   .option('-i, --ispeech',     "force download audio from ispeech")
@@ -81,7 +80,6 @@ try {
 coroutine(function * () {
   var service = null;
   if (program.yahoo)     service = 'yahoo';
-  if (program.voicetube) service = 'voicetube';
   if (program.webster)   service = 'webster';
   if (program.google)    service = 'google';
   if (program.ispeech)   service = 'ispeech';
