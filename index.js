@@ -87,6 +87,13 @@ coroutine(function * () {
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
     var word = program.args[i];
+
+    // remove extension '.mp3 or .wav' if any
+    var reg = /^\w*.(mp3|wav)$/;
+    if (word.length > 4 && reg.test(word) === true) {
+      word = word.slice(0, -4);
+    }
+
     audios[i] = {
       word: word,
       path: null
