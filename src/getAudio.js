@@ -89,7 +89,7 @@ function downloadFile (url, dest) {
 module.exports = function getAudio (word, directory, service) {
   return coroutine(function * () {
     if (typeof word !== 'string' || word.length === 0) {
-      throw TypeError('word should be a string');
+      throw new TypeError('word should be a string');
     }
 
     // convert to lower case

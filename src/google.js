@@ -29,7 +29,7 @@ function token (str, key) {
 module.exports = function google (word) {
   return coroutine(function * () {
     if (typeof word !== 'string' || word.length === 0) {
-      throw TypeError('word should be a string');
+      throw new TypeError('word should be a string');
     }
 
     // replace '_' to ' ', and convert to lower case
