@@ -89,7 +89,7 @@ coroutine(function * () {
     var word = program.args[i];
 
     // remove extension '.mp3 or .wav' if any
-    var reg = /^\w*.(mp3|wav)$/;
+    var reg = /.(mp3|wav)$/;
     if (word.length > 4 && reg.test(word) === true) {
       word = word.slice(0, -4);
     }
