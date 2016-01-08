@@ -50,9 +50,10 @@ module.exports = function google (word) {
 
     // get key
     var key = null;
+    var reg = /^TKK='\d*'$/;
     for (var i = 0; i < scripts.length; i++) {
       var code = scripts[i];
-      if (code.match(/^TKK='\d*'$/)) {
+      if (reg.test(code)) {
         eval('var ' + code);   // var TKK = '123456'
         key = parseInt(TKK, 10);
         break;
