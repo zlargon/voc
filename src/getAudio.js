@@ -26,6 +26,12 @@ var Service = {
     type: 'tts',
     getUrl: require('./google'),
     ext: '.mp3'
+  },
+
+  ispeech: {
+    type: 'tts',
+    getUrl: require('./ispeech'),
+    ext: '.mp3'
   }
 };
 

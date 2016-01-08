@@ -74,6 +74,22 @@ describe('Get Audio', function() {
     );
   });
 
+  it('great (from ispeech)', function () {
+    this.timeout(10000);
+    var word = 'great';
+    return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
+      path.resolve(__dirname, 'great.mp3')
+    );
+  });
+
+  it('Have_A_Nice_Day (from ispeech)', function () {
+    this.timeout(10000);
+    var word = 'Have_A_Nice_Day';
+    return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
+      path.resolve(__dirname, 'have_a_nice_day.mp3')
+    );
+  });
+
   it('askdjalksjdl', function () {
     this.timeout(10000);
     var word = 'askdjalksjdl';
