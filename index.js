@@ -86,7 +86,7 @@ coroutine(function * () {
 
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
-    var word = program.args[i];
+    var word = program.args[i].replace(/ /g, '_');
 
     // remove extension '.mp3 or .wav' if any
     var reg = /.(mp3|wav)$/;
