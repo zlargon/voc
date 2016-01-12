@@ -9,6 +9,7 @@ chai.use(chaiAsPromised);
 describe('VoiceTube', function() {
 
   it('Hello', function () {
+    this.timeout(10000);
     var word = 'Hello';
     return expect(voicetube(word)).to.eventually.equal(
       'https://tw.voicetube.com/player/hello.mp3'
@@ -16,6 +17,7 @@ describe('VoiceTube', function() {
   });
 
   it('test', function () {
+    this.timeout(10000);
     var word = 'test';
     return expect(voicetube(word)).to.eventually.equal(
       'https://tw.voicetube.com/player/test.mp3'
@@ -23,6 +25,7 @@ describe('VoiceTube', function() {
   });
 
   it('askdjalksjdl', function () {
+    this.timeout(10000);
     var word = 'askdjalksjdl';
     return expect(voicetube(word)).to.eventually.be.rejected;
   });
@@ -38,6 +41,7 @@ describe('VoiceTube', function() {
   });
 
   it('123 (string)', function () {
+    this.timeout(10000);
     var word = '123';
     return expect(voicetube(word)).to.eventually.be.rejected;
   });
