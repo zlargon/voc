@@ -42,10 +42,10 @@ Options:
 ## Example
 
 ```bash
-$ voc hello                # download hello.mp3
-$ voc hello world          # download both hello.mp3, world.mp3
-$ voc hello_world -g       # download sentence hello_world.mp3 from google service
-$ voc hello_world -i       # download sentence hello_world.mp3 from ispeech service
+$ voc hello            # download hello.mp3
+$ voc hello world      # download both hello.mp3, world.mp3
+$ voc hello_world -g   # download sentence hello_world.mp3 from google service
+$ voc hello_world -i   # download sentence hello_world.mp3 from ispeech service
 ```
 
 ## Configuration
