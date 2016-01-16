@@ -25,12 +25,33 @@ module.exports = function yahoo (word) {
     var $ = cheerio.load(html);
     var data = $('#iconStyle.tri').text();
 
+    var audios;
     try {
-      return JSON.parse(data).sound_url_1[0].mp3;
+      audios = JSON.parse(data).sound_url_1.reduce(function (list, item) {
+        if (typeof item.mp3 === 'string') {
+          list.push(item.mp3);
+        }
+        return list;
+      }, []);
+
+      if (audios.length === 0) {
+        throw null;  // not found
+      }
     } catch (e) {
       var err = new Error(word + ' is not found from yahoo');
       err.code = 'ENOENT';
       throw err;
     }
+
+    // show all the audio url
+    if (audios.length > 1) {
+      audios.forEach(function (audio, i) {
+        i++;
+        console.log(i + '. ' + audio);
+      });
+    }
+
+    // return the first audio from list
+    return audios[0];
   });
 }

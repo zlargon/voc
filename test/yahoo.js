@@ -22,6 +22,13 @@ describe('Yahoo Dictionary', function() {
     );
   });
 
+  it('cactus', function () {
+    var word = 'cactus';
+    return expect(yahoo(word)).to.eventually.equal(
+      'https://s.yimg.com/tn/dict/dreye/live/m/cactus.mp3'
+    );
+  });
+
   it('askdjalksjdl', function () {
     var word = 'askdjalksjdl';
     return expect(yahoo(word)).to.eventually.be.rejected;
