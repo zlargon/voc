@@ -23,35 +23,39 @@ module.exports = function yahoo (word) {
 
     var html = yield res.text();
     var $ = cheerio.load(html);
-    var data = $('#iconStyle.tri').text();
 
-    var audios;
+    var map = {};
+    var list = [];
     try {
-      audios = JSON.parse(data).sound_url_1.reduce(function (list, item) {
-        if (typeof item.mp3 === 'string') {
-          list.push(item.mp3);
+      var data = $('#iconStyle.tri').text();
+      JSON.parse(data).sound_url_1.forEach(function (item) {
+        var audio = item.mp3;
+        if (typeof audio !== 'string' || map.hasOwnProperty(audio) === true) {
+          return;
         }
-        return list;
-      }, []);
 
-      if (audios.length === 0) {
-        throw null;  // not found
-      }
+        map[audio] = true;
+        list.push(audio);
+      });
     } catch (e) {
+      // JSON parse failed
+    }
+
+    if (list.length === 0) {
       var err = new Error(word + ' is not found from yahoo');
       err.code = 'ENOENT';
       throw err;
     }
 
     // show all the audio url
-    if (audios.length > 1) {
-      audios.forEach(function (audio, i) {
+    if (list.length > 1) {
+      list.forEach(function (audio, i) {
         i++;
         console.log(i + '. ' + audio);
       });
     }
 
     // return the first audio from list
-    return audios[0];
+    return list[0];
   });
 }
