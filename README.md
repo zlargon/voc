@@ -13,6 +13,12 @@ Dictionary:
 Text-To-Speech:
  - [Google](https://translate.google.com/)
  - [iSpeech](http://www.ispeech.org/)
+ - [Voice RSS](http://www.voicerss.org/)
+
+## Support Node.js version
+
+* `node.js` >= 0.12.0
+* `io.js` >= 1.0.0
 
 ## Installation
 
@@ -33,6 +39,7 @@ Options:
   -y, --yahoo        force download audio from yahoo
   -g, --google       force download audio from google
   -i, --ispeech      force download audio from ispeech
+  -v, --voicerss     force download audio from voicerss
   -a, --audio <cli>  the command line to play .mp3 audio. set defaults to 'afplay'
   -d, --dir <path>   set the download directory. set defaults to '~/vocabulary'
   -l, --list         list all the configuration
@@ -42,10 +49,10 @@ Options:
 ## Example
 
 ```bash
-$ voc hello            # download hello.mp3
-$ voc hello world      # download both hello.mp3, world.mp3
-$ voc hello_world -g   # download sentence hello_world.mp3 from google service
-$ voc hello_world -i   # download sentence hello_world.mp3 from ispeech service
+$ voc hello              # download hello.mp3
+$ voc hello world        # download both hello.mp3, world.mp3
+$ voc hello_world -g     # download hello_world.mp3 from google service
+$ voc "Hello World" -i   # download hello_world.mp3 from ispeech service
 ```
 
 ## Configuration
