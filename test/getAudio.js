@@ -82,6 +82,22 @@ describe('Get Audio', function() {
     );
   });
 
+  it('perfect (from voicerss)', function () {
+    this.timeout(10000);
+    var word = 'perfect';
+    return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
+      path.resolve(__dirname, 'perfect.mp3')
+    );
+  });
+
+  it('today_is_sunday (from voicerss)', function () {
+    this.timeout(10000);
+    var word = 'today_is_sunday';
+    return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
+      path.resolve(__dirname, 'today_is_sunday.mp3')
+    );
+  });
+
   it('askdjalksjdl', function () {
     this.timeout(10000);
     var word = 'askdjalksjdl';

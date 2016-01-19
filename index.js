@@ -58,6 +58,7 @@ program
   .option('-y, --yahoo',       "force download audio from yahoo")
   .option('-g, --google',      "force download audio from google")
   .option('-i, --ispeech',     "force download audio from ispeech")
+  .option('-v, --voicerss',    "force download audio from voicerss")
   .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
   .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
   .option('-l, --list',        "list all the configuration",                                    list)
@@ -83,6 +84,7 @@ coroutine(function * () {
   if (program.webster)   service = 'webster';
   if (program.google)    service = 'google';
   if (program.ispeech)   service = 'ispeech';
+  if (program.voicerss)  service = 'voicerss';
 
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
