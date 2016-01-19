@@ -15,7 +15,7 @@ module.exports = function ispeech (word) {
       action: 'convert',
       apikey: '59e482ac28dd52db23a22aff4ac1d31e',
       voice: 'usenglishmale',
-      speed: -4,
+      speed: 0,
       text: word
     }
   });
