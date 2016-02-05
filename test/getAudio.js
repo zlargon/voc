@@ -50,6 +50,14 @@ describe('Get Audio', function() {
     return expect(getAudio(word, __dirname, 'webster')).to.eventually.be.rejected;
   });
 
+  it('test-drive', function () {
+    this.timeout(10000);
+    var word = 'test-drive';
+    return expect(getAudio(word, __dirname, 'collins')).to.eventually.equal(
+      path.resolve(__dirname, 'test-drive.mp3')
+    );
+  });
+
   it('testing (from google)', function () {
     this.timeout(10000);
     var word = 'testing';

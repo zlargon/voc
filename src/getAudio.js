@@ -12,6 +12,11 @@ var Service = {
     getUrl: require('./webster')
   },
 
+  collins: {
+    type: 'dic',
+    getUrl: require('./collins')
+  },
+
   yahoo: {
     type: 'dic',
     getUrl: require('./yahoo')
