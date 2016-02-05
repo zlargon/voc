@@ -11,12 +11,6 @@ var getAudio  = require('./src/getAudio');
 var config    = require('./config.json');
 var pkg       = require('./package.json');
 
-// Default Config
-var DEFAULT = {
-  directory: path.resolve(process.env.HOME, 'vocabulary'),
-  audio_cli: 'afplay' // Mac OS X default audio file player
-};
-
 function list () {
   for (var key in config) {
     console.log('%s: "%s"', key, config[key]);
@@ -32,7 +26,31 @@ function save () {
 }
 
 function reset () {
-  config = DEFAULT;
+  switch (process.platform) {
+    // Windows
+    case 'win32':
+      config = {
+        directory: path.resolve(process.env.USERPROFILE, 'vocabulary'),
+        audio_cli: 'dlc -p'
+      }
+      break;
+
+    // MacOS
+    case 'darwin':
+      config = {
+        directory: path.resolve(process.env.HOME, 'vocabulary'),
+        audio_cli: 'afplay'
+      };
+      break;
+
+    // UNIX
+    default:
+      config = {
+        directory: path.resolve(process.env.HOME, 'vocabulary'),
+        audio_cli: 'mpg123 -q'
+      };
+      break;
+  }
   save();
 }
 
@@ -114,15 +132,40 @@ coroutine(function * () {
     }
   }
 
+  // test audio player command line
+  var cli = config.audio_cli.split(' ')[0];
+  try {
+    exec('which ' + cli);
+  } catch (e) {
+    console.log('\naudio player command line "' + cli + '" is not found.\n');
+
+    switch (cli) {
+      case 'dlc':
+        console.log('Download DLC player');
+        console.log('http://dlcplayer.jimdo.com/');
+        break;
+
+      case 'mpg123':
+        console.log('Download mpg123 player');
+        console.log('http://www.mpg123.de');
+        console.log('$ sudo apt-get install mpg123');
+        break;
+    }
+
+    console.log('');
+    return;
+  }
+
   // play audio
   audios.forEach(function (audio) {
-    if (audio.path !== null) {
-      console.log("play '%s' ...", path.basename(audio.path));
-      var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
-      exec(cmd);
-    } else {
+    if (audio.path === null) {
       console.log("'%s' is not found%s", audio.word, service ? ' from ' + service : '');
+      return;
     }
+
+    console.log("play '%s' ...", path.basename(audio.path));
+    var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
+    exec(cmd);
   });
 })
 .catch(function (e) {
