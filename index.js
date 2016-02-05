@@ -1,4 +1,6 @@
-#!/usr/bin/env node --harmony
+#!/bin/sh
+":" //# comment; exec /usr/bin/env node --harmony "$0" "$@"
+
 var path      = require('path');
 var util      = require('util');
 var fs        = require('fs');
