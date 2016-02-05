@@ -5,41 +5,7 @@ var http      = require('http');
 var https     = require('https');
 var path      = require('path');
 var coroutine = require('co');
-
-var Service = {
-  webster: {
-    type: 'dic',
-    getUrl: require('./webster')
-  },
-
-  collins: {
-    type: 'dic',
-    getUrl: require('./collins')
-  },
-
-  yahoo: {
-    type: 'dic',
-    getUrl: require('./yahoo')
-  },
-
-  google: {
-    type: 'tts',
-    getUrl: require('./google'),
-    ext: '.mp3'
-  },
-
-  ispeech: {
-    type: 'tts',
-    getUrl: require('./ispeech'),
-    ext: '.mp3'
-  },
-
-  voicerss: {
-    type: 'tts',
-    getUrl: require('./voicerss'),
-    ext: '.mp3'
-  }
-};
+var Service   = require('./service');
 
 function getExistAudio (word, directory) {
   var ext = ['.mp3', '.wav'];
