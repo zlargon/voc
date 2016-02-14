@@ -24,8 +24,7 @@ function getExistAudio (word, directory) {
   return null;
 }
 
-function downloadAudio (word, directory, serviceName) {
-  return coroutine(function * () {
+var downloadAudio = coroutine.wrap(function * (word, directory, serviceName) {
     var serv = Service[serviceName];
     if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
@@ -37,8 +36,7 @@ function downloadAudio (word, directory, serviceName) {
     yield downloadFile(url, audioDest);
     console.log("Download '%s' from %s ...", audioName, serviceName);
     return audioDest;
-  });
-}
+});
 
 function downloadFile (url, dest) {
   return new Promise(function (resolve, reject) {
@@ -80,8 +78,7 @@ function downloadFile (url, dest) {
   });
 }
 
-module.exports = function getAudio (word, directory, service) {
-  return coroutine(function * () {
+module.exports = coroutine.wrap(function * (word, directory, service) {
     if (typeof word !== 'string' || word.length === 0) {
       throw new TypeError('word should be a string');
     }
@@ -122,5 +119,4 @@ module.exports = function getAudio (word, directory, service) {
     var err = new Error(word + ' is not found');
     err.code = 'ENOENT';
     throw err;
-  });
-}
+});

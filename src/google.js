@@ -26,8 +26,7 @@ function token (str, key) {
   return num.toString() + '.' + (num ^ key);
 };
 
-module.exports = function google (word) {
-  return coroutine(function * () {
+module.exports = coroutine.wrap(function * (word) {
     if (typeof word !== 'string' || word.length === 0) {
       throw new TypeError('word should be a string');
     }
@@ -80,5 +79,4 @@ module.exports = function google (word) {
     });
 
     return HOST + '/translate_tts' + querystring;
-  });
-}
+});

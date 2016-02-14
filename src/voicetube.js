@@ -2,8 +2,7 @@ var util      = require('util');
 var coroutine = require('co');
 var fetch     = require('node-fetch');
 
-module.exports = function voicetube (word) {
-  return coroutine(function * () {
+module.exports = coroutine.wrap(function * (word) {
     if (typeof word !== 'string' || word.length === 0) {
       throw new TypeError('word should be a string');
     }
@@ -32,5 +31,4 @@ module.exports = function voicetube (word) {
     var err = new Error(word + ' is not found from voicetube');
     err.code = 'ENOENT';
     throw err;
-  });
-}
+});

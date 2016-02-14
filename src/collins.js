@@ -3,8 +3,7 @@ var coroutine = require('co');
 var fetch     = require('node-fetch');
 var cheerio   = require('cheerio');
 
-module.exports = function collins (word) {
-  return coroutine(function * () {
+module.exports = coroutine.wrap(function * (word) {
     if (typeof word !== 'string' || word.length === 0) {
       throw new TypeError('word should be a string');
     }
@@ -79,5 +78,4 @@ module.exports = function collins (word) {
 
     // return the first audio from list
     return list[0];
-  });
-}
+});
