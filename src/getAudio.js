@@ -25,17 +25,17 @@ function getExistAudio (word, directory) {
 }
 
 var downloadAudio = coroutine.wrap(function * (word, directory, serviceName) {
-    var serv = Service[serviceName];
-    if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
+  var serv = Service[serviceName];
+  if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
-    var url = yield serv.getUrl(word);
-    var ext = serv.ext || path.extname(url);
-    var audioName = word + ext;                         // audio.mp3 or audio.wav
-    var audioDest = path.resolve(directory, audioName); // audio destination
+  var url = yield serv.getUrl(word);
+  var ext = serv.ext || path.extname(url);
+  var audioName = word + ext;                         // audio.mp3 or audio.wav
+  var audioDest = path.resolve(directory, audioName); // audio destination
 
-    yield downloadFile(url, audioDest);
-    console.log("Download '%s' from %s ...", audioName, serviceName);
-    return audioDest;
+  yield downloadFile(url, audioDest);
+  console.log("Download '%s' from %s ...", audioName, serviceName);
+  return audioDest;
 });
 
 function downloadFile (url, dest) {
@@ -79,44 +79,44 @@ function downloadFile (url, dest) {
 }
 
 module.exports = coroutine.wrap(function * (word, directory, service) {
-    if (typeof word !== 'string' || word.length === 0) {
-      throw new TypeError('word should be a string');
+  if (typeof word !== 'string' || word.length === 0) {
+    throw new TypeError('word should be a string');
+  }
+
+  // convert to lower case
+  word = word.toLowerCase();
+
+  // force to download audio from particular service
+  if (service) {
+    return yield downloadAudio(word, directory, service);
+  }
+
+  // check audio is exist or not
+  var audio = getExistAudio(word, directory);
+  if (audio !== null) {
+    return audio;
+  }
+
+  // audio is not exist, search audio URL of the word
+  for (var serv in Service) {
+
+    // download by 'Dictionary' only,
+    // because it can always download audio from 'TTS' successfully even the words are misspell
+    if (Service[serv].type !== 'dic') {
+      continue;
     }
 
-    // convert to lower case
-    word = word.toLowerCase();
-
-    // force to download audio from particular service
-    if (service) {
-      return yield downloadAudio(word, directory, service);
-    }
-
-    // check audio is exist or not
-    var audio = getExistAudio(word, directory);
-    if (audio !== null) {
-      return audio;
-    }
-
-    // audio is not exist, search audio URL of the word
-    for (var serv in Service) {
-
-      // download by 'Dictionary' only,
-      // because it can always download audio from 'TTS' successfully even the words are misspell
-      if (Service[serv].type !== 'dic') {
-        continue;
+    try {
+      return yield downloadAudio(word, directory, serv);
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        throw e;
       }
-
-      try {
-        return yield downloadAudio(word, directory, serv);
-      } catch (e) {
-        if (e.code !== 'ENOENT') {
-          throw e;
-        }
-      }
     }
+  }
 
-    // audio is not found
-    var err = new Error(word + ' is not found');
-    err.code = 'ENOENT';
-    throw err;
+  // audio is not found
+  var err = new Error(word + ' is not found');
+  err.code = 'ENOENT';
+  throw err;
 });

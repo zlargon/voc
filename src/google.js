@@ -27,56 +27,56 @@ function token (str, key) {
 };
 
 module.exports = coroutine.wrap(function * (word) {
-    if (typeof word !== 'string' || word.length === 0) {
-      throw new TypeError('word should be a string');
+  if (typeof word !== 'string' || word.length === 0) {
+    throw new TypeError('word should be a string');
+  }
+
+  // replace '_' to ' ', and convert to lower case
+  word = word.replace(/_/g, ' ').toLowerCase();
+
+  var HOST = 'https://translate.google.com';
+  var res = yield fetch(HOST, {
+    timeout: 10 * 1000
+  });
+  if (res.status !== 200) {
+    var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
+    throw new Error(msg);
+  }
+
+  var html = yield res.text();
+  var $ = cheerio.load(html);
+  var scripts = $('#gt-c script').text().split(';');
+
+  // get key
+  var key = null;
+  var reg = /^TKK='\d*'$/;
+  for (var i = 0; i < scripts.length; i++) {
+    var code = scripts[i];
+    if (reg.test(code)) {
+      eval('var ' + code);   // var TKK = '123456'
+      key = parseInt(TKK, 10);
+      break;
     }
+  }
 
-    // replace '_' to ' ', and convert to lower case
-    word = word.replace(/_/g, ' ').toLowerCase();
+  if (key === null) {
+    throw new Error('key is not found');
+  }
 
-    var HOST = 'https://translate.google.com';
-    var res = yield fetch(HOST, {
-      timeout: 10 * 1000
-    });
-    if (res.status !== 200) {
-      var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
-      throw new Error(msg);
+  var querystring = UrlFormat({
+    query: {
+      ie: 'UTF-8',
+      q: word,    // encodeURIComponent
+      tl: 'en',
+      total: 1,
+      idx: 0,
+      textlen: word.length,
+      tk: token(word, key),
+      client: 't',
+      prev: 'input',
+      ttsspeed: 1   // slow = 0.24
     }
+  });
 
-    var html = yield res.text();
-    var $ = cheerio.load(html);
-    var scripts = $('#gt-c script').text().split(';');
-
-    // get key
-    var key = null;
-    var reg = /^TKK='\d*'$/;
-    for (var i = 0; i < scripts.length; i++) {
-      var code = scripts[i];
-      if (reg.test(code)) {
-        eval('var ' + code);   // var TKK = '123456'
-        key = parseInt(TKK, 10);
-        break;
-      }
-    }
-
-    if (key === null) {
-      throw new Error('key is not found');
-    }
-
-    var querystring = UrlFormat({
-      query: {
-        ie: 'UTF-8',
-        q: word,    // encodeURIComponent
-        tl: 'en',
-        total: 1,
-        idx: 0,
-        textlen: word.length,
-        tk: token(word, key),
-        client: 't',
-        prev: 'input',
-        ttsspeed: 1   // slow = 0.24
-      }
-    });
-
-    return HOST + '/translate_tts' + querystring;
+  return HOST + '/translate_tts' + querystring;
 });
