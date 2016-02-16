@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var ispeech        = require('../src/tts/ispeech');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var ispeech = rewire('../src/tts/ispeech');
 describe('tts.ispeech', function() {
+
+  before(function () {
+    // mock console.log
+    ispeech.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     var word = 'Hello';

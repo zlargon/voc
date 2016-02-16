@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var webster        = require('../src/dic/webster');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var webster = rewire('../src/dic/webster');
 describe('dic.webster', function() {
+
+  before(function () {
+      // mock console.log
+      webster.__set__({
+        console: {
+          log: function () {}
+        }
+      });
+    });
 
   it('Hello', function () {
     this.timeout(10000);

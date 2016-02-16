@@ -44,6 +44,7 @@
     "chai": "^3.4.1",
     "chai-as-promised": "^5.2.0",
     "eslint": "^2.1.0",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "rewire": "^2.5.1"
   }
 }

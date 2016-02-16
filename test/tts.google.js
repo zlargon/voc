@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var google         = require('../src/tts/google');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var google = rewire('../src/tts/google');
 describe('tts.google', function() {
+
+  before(function () {
+    // mock console.log
+    google.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     var word = 'Hello';

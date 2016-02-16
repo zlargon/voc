@@ -1,19 +1,26 @@
-var fs             = require('fs');
-var path           = require('path');
-var exec           = require('child_process').execSync;
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var getAudio       = require('../src/getAudio');
-var expect         = chai.expect;
+var fs     = require('fs');
+var path   = require('path');
+var exec   = require('child_process').execSync;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var getAudio = rewire('../src/getAudio');
 var removeAudioCommand = 'rm -f ' + __dirname + '/*.mp3 ' + __dirname + '/*.wav';
 
 describe('Get Audio', function() {
   before(function () {
     exec(removeAudioCommand);
+
+    // mock console.log
+    getAudio.__set__({
+      console: {
+        log: function () {}
+      }
+    });
   });
 
   after(function () {

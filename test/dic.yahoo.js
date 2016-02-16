@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var yahoo          = require('../src/dic/yahoo');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var yahoo = rewire('../src/dic/yahoo');
 describe('dic.yahoo', function() {
+
+  before(function () {
+    // mock console.log
+    yahoo.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     var word = 'Hello';

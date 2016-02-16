@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var voicerss       = require('../src/tts/voicerss');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var voicerss = rewire('../src/tts/voicerss');
 describe('tts.voicerss', function() {
+
+  before(function () {
+    // mock console.log
+    voicerss.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     var word = 'Hello';

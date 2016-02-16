@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var voicetube      = require('../src/dic/voicetube');
-var expect         = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var voicetube = rewire('../src/dic/voicetube');
 describe('dic.voicetube', function() {
+
+  before(function () {
+    // mock console.log
+    voicetube.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     this.timeout(10000);

@@ -1,12 +1,21 @@
-var chai           = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var collins        = require('../src/dic/collins');
-var expect         = chai.expect;
+var rewire  = require('rewire');
+var chai    = require('chai');
+var expect  = chai.expect;
 
 // setup promise
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
 
+var collins = rewire('../src/dic/collins');
 describe('dic.collins', function() {
+
+  before(function () {
+    // mock console.log
+    collins.__set__({
+      console: {
+        log: function () {}
+      }
+    });
+  });
 
   it('Hello', function () {
     this.timeout(10000);
