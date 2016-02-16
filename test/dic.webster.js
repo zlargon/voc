@@ -1,12 +1,12 @@
 var chai           = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var webster        = require('../src/webster');
+var webster        = require('../src/dic/webster');
 var expect         = chai.expect;
 
 // setup promise
 chai.use(chaiAsPromised);
 
-describe('Webster', function() {
+describe('dic.webster', function() {
 
   it('Hello', function () {
     this.timeout(10000);

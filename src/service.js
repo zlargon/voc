@@ -1,34 +1,34 @@
 module.exports = {
   webster: {
     type: 'dic',
-    getUrl: require('./webster')
+    getUrl: require('./dic/webster')
   },
 
   collins: {
     type: 'dic',
-    getUrl: require('./collins')
+    getUrl: require('./dic/collins')
   },
 
   yahoo: {
     type: 'dic',
-    getUrl: require('./yahoo')
+    getUrl: require('./dic/yahoo')
   },
 
   google: {
     type: 'tts',
-    getUrl: require('./google'),
+    getUrl: require('./tts/google'),
     ext: '.mp3'
   },
 
   ispeech: {
     type: 'tts',
-    getUrl: require('./ispeech'),
+    getUrl: require('./tts/ispeech'),
     ext: '.mp3'
   },
 
   voicerss: {
     type: 'tts',
-    getUrl: require('./voicerss'),
+    getUrl: require('./tts/voicerss'),
     ext: '.mp3'
   }
 };

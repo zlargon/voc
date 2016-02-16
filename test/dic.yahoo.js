@@ -1,12 +1,12 @@
 var chai           = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var yahoo          = require('../src/yahoo');
+var yahoo          = require('../src/dic/yahoo');
 var expect         = chai.expect;
 
 // setup promise
 chai.use(chaiAsPromised);
 
-describe('Yahoo Dictionary', function() {
+describe('dic.yahoo', function() {
 
   it('Hello', function () {
     var word = 'Hello';

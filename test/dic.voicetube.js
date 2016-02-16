@@ -1,12 +1,12 @@
 var chai           = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var voicetube      = require('../src/voicetube');
+var voicetube      = require('../src/dic/voicetube');
 var expect         = chai.expect;
 
 // setup promise
 chai.use(chaiAsPromised);
 
-describe('VoiceTube', function() {
+describe('dic.voicetube', function() {
 
   it('Hello', function () {
     this.timeout(10000);

@@ -1,12 +1,12 @@
 var chai           = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var google         = require('../src/google');
+var google         = require('../src/tts/google');
 var expect         = chai.expect;
 
 // setup promise
 chai.use(chaiAsPromised);
 
-describe('google', function() {
+describe('tts.google', function() {
 
   it('Hello', function () {
     var word = 'Hello';

@@ -1,12 +1,12 @@
 var chai           = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var collins        = require('../src/collins');
+var collins        = require('../src/dic/collins');
 var expect         = chai.expect;
 
 // setup promise
 chai.use(chaiAsPromised);
 
-describe('collins', function() {
+describe('dic.collins', function() {
 
   it('Hello', function () {
     this.timeout(10000);
