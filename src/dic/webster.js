@@ -42,7 +42,7 @@ module.exports = coroutine.wrap(function * (word) {
   });
 
   if (list.length === 0) {
-    var err = new Error(word + ' is not found from webster');
+    err = new Error(word + ' is not found from webster');
     err.code = 'ENOENT';
     throw err;
   }

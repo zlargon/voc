@@ -32,7 +32,7 @@ function reset () {
       config = {
         directory: path.resolve(process.env.USERPROFILE, 'vocabulary'),
         audio_cli: 'dlc -p'
-      }
+      };
       break;
 
     // MacOS

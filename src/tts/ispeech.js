@@ -21,4 +21,4 @@ module.exports = function ispeech (word) {
   });
 
   return Promise.resolve(url);
-}
+};

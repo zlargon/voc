@@ -39,21 +39,20 @@ module.exports = coroutine.wrap(function * (word) {
   }
 
   // get the word page
-  var url = HOST + '/dictionary/american/' + word.replace(/ /g, '-');
-  var res = yield fetch(url, {
+  url = HOST + '/dictionary/american/' + word.replace(/ /g, '-');
+  res = yield fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
-    var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
+    msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
     throw new Error(msg);
   }
 
   // parse HTML
-  var html = yield res.text();
-  var $ = cheerio.load(html);
+  var $ = cheerio.load(yield res.text());
 
+  list = [];
   var map = {};
-  var list = [];
   $('a.hwd_sound').each(function (index, ele) {
     var audio = HOST + $(ele).attr('data-src-mp3');
     if (map.hasOwnProperty(audio) === false) {
@@ -63,7 +62,7 @@ module.exports = coroutine.wrap(function * (word) {
   });
 
   if (list.length === 0) {
-    var err = new Error(word + ' has no audio from collins');
+    err = new Error(word + ' has no audio from collins');
     err.code = 'ENOENT';
     throw err;
   }

@@ -13,10 +13,10 @@ module.exports = function voicerss (word) {
     query: {
       hl: 'en-us',
       src: word,
-      c: 'mp3',
+      c: 'mp3'
       // rnd: Math.random()
     }
   });
 
   return Promise.resolve(url);
-}
+};

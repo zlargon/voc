@@ -24,7 +24,7 @@ function token (str, key) {
   num %= 1E6;
 
   return num.toString() + '.' + (num ^ key);
-};
+}
 
 module.exports = coroutine.wrap(function * (word) {
   if (typeof word !== 'string' || word.length === 0) {
@@ -39,12 +39,11 @@ module.exports = coroutine.wrap(function * (word) {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
-    var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
+    var msg = util.format('request to %s failed, status code = %d (%s)', HOST, res.status, res.statusText);
     throw new Error(msg);
   }
 
-  var html = yield res.text();
-  var $ = cheerio.load(html);
+  var $ = cheerio.load(yield res.text());
   var scripts = $('#gt-c script').text().split(';');
 
   // get key
@@ -53,7 +52,8 @@ module.exports = coroutine.wrap(function * (word) {
   for (var i = 0; i < scripts.length; i++) {
     var code = scripts[i];
     if (reg.test(code)) {
-      eval('var ' + code);   // var TKK = '123456'
+      var TKK;
+      eval(code);   // TKK = '123456'
       key = parseInt(TKK, 10);
       break;
     }
