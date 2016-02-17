@@ -75,8 +75,9 @@ program
   .usage('<words...>')
   .version(pkg.version)
   .option('-w, --webster',     "force download audio from webster")
-  .option('-c, --collins',     "force download audio from collins")
   .option('-y, --yahoo',       "force download audio from yahoo")
+  .option('-C, --collins',     "force download audio from collins")
+  .option('-c, --collins-edu', "force download audio from collins education")
   .option('-g, --google',      "force download audio from google")
   .option('-i, --ispeech',     "force download audio from ispeech")
   .option('-v, --voicerss',    "force download audio from voicerss")
@@ -101,12 +102,13 @@ try {
 // 4. get and play audio
 coroutine(function * () {
   var service = null;
-  if (program.yahoo)     service = 'yahoo';
-  if (program.collins)   service = 'collins';
-  if (program.webster)   service = 'webster';
-  if (program.google)    service = 'google';
-  if (program.ispeech)   service = 'ispeech';
-  if (program.voicerss)  service = 'voicerss';
+  if (program.collins)    service = 'collins';
+  if (program.yahoo)      service = 'yahoo';
+  if (program.collinsEdu) service = 'collinsEducation';
+  if (program.webster)    service = 'webster';
+  if (program.google)     service = 'google';
+  if (program.ispeech)    service = 'ispeech';
+  if (program.voicerss)   service = 'voicerss';
 
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {

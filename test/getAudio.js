@@ -65,6 +65,14 @@ describe('Get Audio', function() {
     );
   });
 
+  it('Test_Case (from collins education)', function () {
+    this.timeout(10000);
+    var word = 'Test_Case';
+    return expect(getAudio(word, __dirname, 'collinsEducation')).to.eventually.equal(
+      path.resolve(__dirname, 'test_case.mp3')
+    );
+  });
+
   it('testing (from google)', function () {
     this.timeout(10000);
     var word = 'testing';
@@ -142,5 +150,4 @@ describe('Get Audio', function() {
     var word = '';
     return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
   });
-
 });
