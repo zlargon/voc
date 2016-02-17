@@ -12,9 +12,9 @@
     "voc": "index.js"
   },
   "scripts": {
-    "test": "mocha --harmony",
+    "test": "mocha --es_staging",
     "lint": "eslint .",
-    "cover": "istanbul cover _mocha"
+    "cover": "istanbul cover _mocha -- --es_staging"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "chai-as-promised": "^5.2.0",
+    "coveralls": "^2.11.6",
     "eslint": "^2.1.0",
     "istanbul": "^0.4.2",
     "mocha": "^2.3.4",

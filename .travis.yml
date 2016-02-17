@@ -1,8 +1,12 @@
 language: node_js
 node_js:
-  - "4.2"
-  - "4.1"
-  - "4.0"
   - "0.12"
+  - "4"
   - "iojs"
   - "node"
+
+script:
+  - "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --es_staging -R spec"
+
+after_script:
+  - "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

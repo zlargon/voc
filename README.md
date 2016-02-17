@@ -1,6 +1,6 @@
 # voc
 
-[![Build Status](https://travis-ci.org/zlargon/voc.svg)](https://travis-ci.org/zlargon/voc)
+[![Build Status](https://travis-ci.org/zlargon/voc.svg)](https://travis-ci.org/zlargon/voc) [![Coverage Status](https://coveralls.io/repos/github/zlargon/voc/badge.svg?branch=master)](https://coveralls.io/github/zlargon/voc?branch=master)
 
 Download and play English vocabulary's audio via command line.
 
