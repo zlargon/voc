@@ -9,7 +9,7 @@
   },
   "preferGlobal": "true",
   "bin": {
-    "voc": "voc.js"
+    "voc": "index.js"
   },
   "scripts": {
     "test": "mocha --harmony",

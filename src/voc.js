@@ -1,15 +1,12 @@
-#!/bin/sh
-":" //# comment; exec /usr/bin/env node --harmony "$0" "$@"
-
 var path      = require('path');
 var util      = require('util');
 var fs        = require('fs');
 var coroutine = require('co');
 var program   = require('commander');
 var exec      = require('child_process').execSync;
-var getAudio  = require('./src/getAudio');
-var config    = require('./config.json');
-var pkg       = require('./package.json');
+var getAudio  = require('./getAudio');
+var config    = require('../config.json');
+var pkg       = require('../package.json');
 
 function list () {
   for (var key in config) {
@@ -19,7 +16,7 @@ function list () {
 
 function save () {
   fs.writeFileSync(
-    path.resolve(__dirname, 'config.json'),
+    path.resolve(__dirname, '../config.json'),
     JSON.stringify(config, null, 2) + '\n'
   );
   list();
@@ -64,43 +61,42 @@ function setAudioDirectory (path) {
   save();
 }
 
+module.exports = coroutine.wrap(function * (process_argv) {
+  // 1. init config
+  if (config.directory === '') {
+    reset();
+  }
 
-// 1. init config
-if (config.directory === '') {
-  reset();
-}
+  // 2. parse command
+  program
+    .usage('<words...>')
+    .version(pkg.version)
+    .option('-w, --webster',     "force download audio from webster")
+    .option('-y, --yahoo',       "force download audio from yahoo")
+    .option('-C, --collins',     "force download audio from collins")
+    .option('-c, --collins-edu', "force download audio from collins education")
+    .option('-g, --google',      "force download audio from google")
+    .option('-i, --ispeech',     "force download audio from ispeech")
+    .option('-v, --voicerss',    "force download audio from voicerss")
+    .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
+    .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
+    .option('-l, --list',        "list all the configuration",                                    list)
+    .option('-r, --reset',       "reset configuration to default",                                reset)
+    .parse(process_argv);
 
-// 2. parse command
-program
-  .usage('<words...>')
-  .version(pkg.version)
-  .option('-w, --webster',     "force download audio from webster")
-  .option('-y, --yahoo',       "force download audio from yahoo")
-  .option('-C, --collins',     "force download audio from collins")
-  .option('-c, --collins-edu', "force download audio from collins education")
-  .option('-g, --google',      "force download audio from google")
-  .option('-i, --ispeech',     "force download audio from ispeech")
-  .option('-v, --voicerss',    "force download audio from voicerss")
-  .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
-  .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
-  .option('-l, --list',        "list all the configuration",                                    list)
-  .option('-r, --reset',       "reset configuration to default",                                reset)
-  .parse(process.argv);
+  // show help info if input is empty
+  if (process_argv.length <= 2) {
+    program.help();
+  }
 
-// show help info if input is empty
-if (process.argv.length <= 2) {
-  program.help();
-}
+  // 3. create directory
+  try {
+    fs.mkdirSync(config.directory);
+  } catch(e) {
+    if (e.code !== 'EEXIST') throw e;
+  }
 
-// 3. create directory
-try {
-  fs.mkdirSync(config.directory);
-} catch(e) {
-  if (e.code !== 'EEXIST') throw e;
-}
-
-// 4. get and play audio
-coroutine(function * () {
+  // 4. choice the service
   var service = null;
   if (program.collins)    service = 'collins';
   if (program.yahoo)      service = 'yahoo';
@@ -110,6 +106,7 @@ coroutine(function * () {
   if (program.ispeech)    service = 'ispeech';
   if (program.voicerss)   service = 'voicerss';
 
+  // 5. get audio path (download audio)
   var audios = [];
   for (var i = 0; i < program.args.length; i++) {
     var word = program.args[i].replace(/ /g, '_');
@@ -134,7 +131,7 @@ coroutine(function * () {
     }
   }
 
-  // test audio player command line
+  // 6. test audio player command line
   var cli = config.audio_cli.split(' ')[0];
   try {
     exec('which ' + cli);
@@ -158,7 +155,7 @@ coroutine(function * () {
     return;
   }
 
-  // play audio
+  // 7. play audio
   audios.forEach(function (audio) {
     if (audio.path === null) {
       console.log("'%s' is not found%s", audio.word, service ? ' from ' + service : '');
@@ -169,7 +166,4 @@ coroutine(function * () {
     var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
     exec(cmd);
   });
-})
-.catch(function (e) {
-  console.log(e.stack);
 });
