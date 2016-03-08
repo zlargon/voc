@@ -1,7 +1,6 @@
-#!/bin/sh
-":" //# comment; exec /usr/bin/env node --harmony "$0" "$@"
-
-var voc = require('./src/voc');
+#!/usr/bin/env node
+require('babel-polyfill');
+var voc = require('./bin/voc');
 
 voc(process.argv)
 .catch(function (e) {
