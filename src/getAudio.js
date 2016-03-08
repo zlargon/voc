@@ -4,7 +4,6 @@ var urlParse  = require('url').parse;
 var http      = require('http');
 var https     = require('https');
 var path      = require('path');
-var coroutine = require('co');
 var Service   = require('./service');
 
 function getExistAudio (word, directory) {
@@ -24,19 +23,19 @@ function getExistAudio (word, directory) {
   return null;
 }
 
-var downloadAudio = coroutine.wrap(function * (word, directory, serviceName) {
+var downloadAudio = async function (word, directory, serviceName) {
   var serv = Service[serviceName];
   if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
-  var url = yield serv.getUrl(word);
+  var url = await serv.getUrl(word);
   var ext = serv.ext || path.extname(url);
   var audioName = word + ext;                         // audio.mp3 or audio.wav
   var audioDest = path.resolve(directory, audioName); // audio destination
 
-  yield downloadFile(url, audioDest);
+  await downloadFile(url, audioDest);
   console.log("Download '%s' from %s ...", audioName, serviceName);
   return audioDest;
-});
+};
 
 function downloadFile (url, dest) {
   return new Promise(function (resolve, reject) {
@@ -78,7 +77,7 @@ function downloadFile (url, dest) {
   });
 }
 
-module.exports = coroutine.wrap(function * (word, directory, service) {
+module.exports = async function (word, directory, service) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -88,7 +87,7 @@ module.exports = coroutine.wrap(function * (word, directory, service) {
 
   // force to download audio from particular service
   if (service) {
-    return yield downloadAudio(word, directory, service);
+    return await downloadAudio(word, directory, service);
   }
 
   // check audio is exist or not
@@ -107,7 +106,7 @@ module.exports = coroutine.wrap(function * (word, directory, service) {
     }
 
     try {
-      return yield downloadAudio(word, directory, serv);
+      return await downloadAudio(word, directory, serv);
     } catch (e) {
       if (e.code !== 'ENOENT') {
         throw e;
@@ -119,4 +118,4 @@ module.exports = coroutine.wrap(function * (word, directory, service) {
   var err = new Error(word + ' is not found');
   err.code = 'ENOENT';
   throw err;
-});
+};

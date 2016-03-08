@@ -1,9 +1,8 @@
 var util      = require('util');
-var coroutine = require('co');
 var fetch     = require('node-fetch');
 var cheerio   = require('cheerio');
 
-module.exports = coroutine.wrap(function * (word) {
+module.exports = async function (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -12,7 +11,7 @@ module.exports = coroutine.wrap(function * (word) {
   word = word.replace(/_/g, ' ').toLowerCase();
 
   var url = 'http://www.merriam-webster.com/dictionary/' + word;
-  var res = yield fetch(url, {
+  var res = await fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -21,7 +20,7 @@ module.exports = coroutine.wrap(function * (word) {
     throw err;
   }
 
-  var html = yield res.text();
+  var html = await res.text();
   var $ = cheerio.load(html);
 
   var map = {};
@@ -57,4 +56,4 @@ module.exports = coroutine.wrap(function * (word) {
 
   // return the first audio from list
   return list[0];
-});
+};

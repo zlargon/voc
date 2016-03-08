@@ -1,6 +1,5 @@
 var util      = require('util');
 var UrlFormat = require('url').format;
-var coroutine = require('co');
 var fetch     = require('node-fetch');
 var cheerio   = require('cheerio');
 
@@ -26,7 +25,7 @@ function token (str, key) {
   return num.toString() + '.' + (num ^ key);
 }
 
-module.exports = coroutine.wrap(function * (word) {
+module.exports = async function (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -35,7 +34,7 @@ module.exports = coroutine.wrap(function * (word) {
   word = word.replace(/_/g, ' ').toLowerCase();
 
   var HOST = 'https://translate.google.com';
-  var res = yield fetch(HOST, {
+  var res = await fetch(HOST, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -43,7 +42,7 @@ module.exports = coroutine.wrap(function * (word) {
     throw new Error(msg);
   }
 
-  var $ = cheerio.load(yield res.text());
+  var $ = cheerio.load(await res.text());
   var scripts = $('#gt-c script').text().split(';');
 
   // get key
@@ -79,4 +78,4 @@ module.exports = coroutine.wrap(function * (word) {
   });
 
   return HOST + '/translate_tts' + querystring;
-});
+};

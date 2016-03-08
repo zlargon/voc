@@ -1,7 +1,6 @@
 var path      = require('path');
 var util      = require('util');
 var fs        = require('fs');
-var coroutine = require('co');
 var program   = require('commander');
 var exec      = require('child_process').execSync;
 var getAudio  = require('./getAudio');
@@ -61,7 +60,7 @@ function setAudioDirectory (path) {
   save();
 }
 
-module.exports = coroutine.wrap(function * (process_argv) {
+module.exports = async function (process_argv) {
   // 1. init config
   if (config.directory === '') {
     reset();
@@ -123,7 +122,7 @@ module.exports = coroutine.wrap(function * (process_argv) {
     };
 
     try {
-      audios[i].path = yield getAudio(word, config.directory, service);
+      audios[i].path = await getAudio(word, config.directory, service);
     } catch (e) {
       if (e.code !== 'ENOENT') {
         throw e;
@@ -166,4 +165,4 @@ module.exports = coroutine.wrap(function * (process_argv) {
     var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
     exec(cmd);
   });
-});
+};

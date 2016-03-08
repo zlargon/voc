@@ -1,9 +1,8 @@
 var util      = require('util');
-var coroutine = require('co');
 var fetch     = require('node-fetch');
 var cheerio   = require('cheerio');
 
-module.exports = coroutine.wrap(function * (word) {
+module.exports = async function (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -13,7 +12,7 @@ module.exports = coroutine.wrap(function * (word) {
 
   var HOST = 'http://www.collinsdictionary.com';
   var url = HOST + '/search/autocomplete/AMERICAN_DICTIONARY?term=' + word;
-  var res = yield fetch(url, {
+  var res = await fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -23,7 +22,7 @@ module.exports = coroutine.wrap(function * (word) {
 
   // find the word from list
   var isFound = false;
-  var list = JSON.parse(yield res.text());
+  var list = JSON.parse(await res.text());
   for (var i = 0; i < list.length; i++) {
     if (list[i] === word) {
       isFound = true;
@@ -40,7 +39,7 @@ module.exports = coroutine.wrap(function * (word) {
 
   // get the word page
   url = HOST + '/dictionary/american/' + word.replace(/ /g, '-');
-  res = yield fetch(url, {
+  res = await fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -49,7 +48,7 @@ module.exports = coroutine.wrap(function * (word) {
   }
 
   // parse HTML
-  var $ = cheerio.load(yield res.text());
+  var $ = cheerio.load(await res.text());
 
   list = [];
   var map = {};
@@ -77,4 +76,4 @@ module.exports = coroutine.wrap(function * (word) {
 
   // return the first audio from list
   return list[0];
-});
+};
