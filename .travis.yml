@@ -1,9 +1,16 @@
 language: node_js
+sudo: false
 node_js:
+  - "0.11"
   - "0.12"
+  - "2"
+  - "3"
   - "4"
   - "iojs"
   - "node"
+
+before_script:
+  - "npm -g install npm@latest"
 
 script:
   - "npm run cover"

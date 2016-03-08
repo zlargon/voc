@@ -16,11 +16,6 @@ Text-To-Speech:
  - [iSpeech](http://www.ispeech.org/)
  - [Voice RSS](http://www.voicerss.org/)
 
-## Support Node.js version
-
-* `node.js` >= 0.12.0
-* `io.js` >= 1.0.0
-
 ## Installation
 
 ```
@@ -32,6 +27,7 @@ or
 ```
 $ git clone https://github.com/zlargon/voc.git
 $ cd voc/
+$ npm install
 $ npm link
 ```
 
@@ -45,12 +41,13 @@ Options:
   -h, --help         output usage information
   -V, --version      output the version number
   -w, --webster      force download audio from webster
-  -c, --collins      force download audio from collins
   -y, --yahoo        force download audio from yahoo
+  -C, --collins      force download audio from collins
+  -c, --collins-edu  force download audio from collins education
   -g, --google       force download audio from google
   -i, --ispeech      force download audio from ispeech
   -v, --voicerss     force download audio from voicerss
-  -a, --audio <cli>  the command line for playing .mp3 audio
+  -a, --audio <cli>  the command line to play .mp3 audio.
   -d, --dir <path>   set the download directory. set defaults to '~/vocabulary'
   -l, --list         list all the configuration
   -r, --reset        reset configuration to default
