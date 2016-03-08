@@ -27,7 +27,6 @@ or
 ```
 $ git clone https://github.com/zlargon/voc.git
 $ cd voc/
-$ npm install
 $ npm link
 ```
 

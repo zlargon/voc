@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 require('babel-polyfill');
-var voc = require('./bin/voc');
+var voc = require('./voc');
 
 voc(process.argv)
-.catch(function (e) {
+.catch(e => {
   console.error(e.stack);
 });

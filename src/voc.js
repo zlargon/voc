@@ -1,11 +1,11 @@
-var path      = require('path');
-var util      = require('util');
-var fs        = require('fs');
-var program   = require('commander');
-var exec      = require('child_process').execSync;
-var getAudio  = require('./getAudio');
-var config    = require('../config.json');
-var pkg       = require('../package.json');
+var path     = require('path');
+var util     = require('util');
+var fs       = require('fs');
+var program  = require('commander');
+var exec     = require('child_process').execSync;
+var getAudio = require('./getAudio');
+var config   = require('../config.json');
+var pkg      = require('../package.json');
 
 function list () {
   for (var key in config) {
