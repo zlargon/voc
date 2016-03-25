@@ -43,22 +43,15 @@ module.exports = async function (word) {
   }
 
   var $ = cheerio.load(await res.text());
-  var scripts = $('#gt-c script').text().split(';');
+  var scripts = $('#gt-c script').text();
 
   // get key
-  var key = null;
-  var reg = /^TKK='\d*'$/;
-  for (var i = 0; i < scripts.length; i++) {
-    var code = scripts[i];
-    if (reg.test(code)) {
-      var TKK;
-      eval(code);   // TKK = '123456'
-      key = parseInt(TKK, 10);
-      break;
-    }
-  }
+  var TKK, key = NaN;
+  var code = scripts.match(/TKK=eval\(\'\(.*\)\'\);/gi)[0];
+  eval(code);
+  key = parseFloat(TKK);
 
-  if (key === null) {
+  if (isNaN(key) === true) {
     throw new Error('key is not found');
   }
 
