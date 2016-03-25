@@ -1,6 +1,7 @@
 coverage
 src
 test
+appveyor.yml
 .travis.yml
 .babelrc
 .eslintrc
