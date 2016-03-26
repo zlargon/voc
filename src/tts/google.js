@@ -47,7 +47,7 @@ module.exports = async function (word) {
 
   // get key
   var TKK, key = NaN;
-  var code = scripts.match(/TKK=eval\(\'\(.*\)\'\);/gi)[0];
+  var code = scripts.match(/TKK=eval\(\'\(.*\)\'\);/g)[0];
   eval(code);
   key = parseFloat(TKK);
 
