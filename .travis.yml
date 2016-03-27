@@ -3,10 +3,8 @@ sudo: false
 node_js:
   - "0.11"
   - "0.12"
-  - "2"
-  - "3"
   - "4"
-  - "iojs"
+  - "5"
   - "node"
 
 before_script:

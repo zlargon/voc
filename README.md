@@ -5,9 +5,9 @@
 [![Dependency Status](https://david-dm.org/zlargon/voc.svg)](https://david-dm.org/zlargon/voc)
 [![devDependency Status](https://david-dm.org/zlargon/voc/dev-status.svg)](https://david-dm.org/zlargon/voc#info=devDependencies)
 
-[![Travis-ci Status](https://travis-ci.org/zlargon/voc.svg)](https://travis-ci.org/zlargon/voc)
-[![Appveyor Status](https://ci.appveyor.com/api/projects/status/p6b7umww30aaf6pg/branch/master?svg=true)](https://ci.appveyor.com/project/zlargon/voc/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/zlargon/voc/badge.svg?branch=master)](https://coveralls.io/github/zlargon/voc?branch=master)
+[![Travis Status](https://travis-ci.org/zlargon/voc.svg)](https://travis-ci.org/zlargon/voc)
+[![Appveyor Status](https://ci.appveyor.com/api/projects/status/p6b7umww30aaf6pg?svg=true)](https://ci.appveyor.com/project/zlargon/voc)
+[![Coverage Status](https://coveralls.io/repos/github/zlargon/voc/badge.svg)](https://coveralls.io/github/zlargon/voc)
 
 > Download and play English vocabulary's audio via command line.
 
