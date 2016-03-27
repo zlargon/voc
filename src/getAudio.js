@@ -1,10 +1,12 @@
-var fs        = require('fs');
-var util      = require('util');
-var urlParse  = require('url').parse;
-var http      = require('http');
-var https     = require('https');
-var path      = require('path');
-var Service   = require('./service');
+require('babel-polyfill');
+
+var fs       = require('fs');
+var util     = require('util');
+var urlParse = require('url').parse;
+var http     = require('http');
+var https    = require('https');
+var path     = require('path');
+var Service  = require('./service');
 
 function getExistAudio (word, directory) {
   var ext = ['.mp3', '.wav'];
