@@ -1,28 +1,65 @@
-var util      = require('util');
-var UrlFormat = require('url').format;
-var fetch     = require('node-fetch');
-var cheerio   = require('cheerio');
+const UrlFormat = require('url').format;
+const fetch     = require('node-fetch');
+const HOST      = 'https://translate.google.com';
 
-function token (str, key) {
-  function RL(num, str) {
-    for (var i = 0; i < str.length - 2; i += 3) {
-      var d = str.charAt(i + 2);
-      d = d >= 'a' ? d.charCodeAt(0) - 87 : Number(d);
-      d = str.charAt(i + 1) === '+' ? num >>> d : num << d;
-      num = str.charAt(i) === '+' ? num + d & 4294967295 : num ^ d;
-    }
-    return num;
+function XL (a, b) {
+  for (var c = 0; c < b.length - 2; c += 3) {
+    var d = b.charAt(c + 2);
+    d = d >= 'a' ? d.charCodeAt(0) - 87 : Number(d);
+    d = b.charAt(c + 1) == '+' ? a >>> d : a << d;
+    a = b.charAt(c) == '+' ? a + d & 4294967295 : a ^ d;
+  }
+  return a;
+}
+
+/**
+ * Generate API Token
+ *
+ * @param   {String} text
+ * @param   {String} key
+ * @return  {String} token
+ */
+function token (text, key) {
+  var a = text, b = key, d = b.split('.');
+  b = Number(d[0]) || 0;
+  for (var e = [], f = 0, g = 0; g < a.length; g++) {
+    var m = a.charCodeAt(g);
+    128 > m ? e[f++] = m : (2048 > m ? e[f++] = m >> 6 | 192 : (55296 == (m & 64512) && g + 1 < a.length && 56320 == (a.charCodeAt(g + 1) & 64512) ? (m = 65536 + ((m & 1023) << 10) + (a.charCodeAt(++g) & 1023),
+    e[f++] = m >> 18 | 240,
+    e[f++] = m >> 12 & 63 | 128) : e[f++] = m >> 12 | 224,
+    e[f++] = m >> 6 & 63 | 128),
+    e[f++] = m & 63 | 128);
+  }
+  a = b;
+  for (f = 0; f < e.length; f++) {
+    a += e[f];
+    a = XL(a, '+-a^+6');
+  }
+  a = XL(a, '+-3^+b+-f');
+  a ^= Number(d[1]) || 0;
+  0 > a && (a = (a & 2147483647) + 2147483648);
+  a = a % 1E6;
+  return a.toString() + '.' + (a ^ b);
+}
+
+async function key () {
+  const res = await fetch(HOST, {
+    timeout: 10 * 1000
+  });
+  if (res.status !== 200) {
+    throw new Error(`request to ${HOST} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  var num = key;
-  for (var i = 0; i < str.length; i++) {
-    num = RL(num + str.charCodeAt(i), '+-a^+6');
+  let TKK = null;
+  const html = await res.text();
+  try {
+    eval(html.match(/TKK=eval\(\'\(.*\)\'\);/g)[0]);  // TKK = '405291.1334555331'
+    if (TKK === null) throw null;
+  } catch (e) {
+    throw new Error('get key failed from google');
   }
-  num = RL(num, '+-3^+b+-f');
-  0 > num && (num = (num & 2147483647) + 2147483648);
-  num %= 1E6;
 
-  return num.toString() + '.' + (num ^ key);
+  return TKK;
 }
 
 module.exports = async function (word) {
@@ -33,29 +70,7 @@ module.exports = async function (word) {
   // replace '_' to ' ', and convert to lower case
   word = word.replace(/_/g, ' ').toLowerCase();
 
-  var HOST = 'https://translate.google.com';
-  var res = await fetch(HOST, {
-    timeout: 10 * 1000
-  });
-  if (res.status !== 200) {
-    var msg = util.format('request to %s failed, status code = %d (%s)', HOST, res.status, res.statusText);
-    throw new Error(msg);
-  }
-
-  var $ = cheerio.load(await res.text());
-  var scripts = $('#gt-c script').text();
-
-  // get key
-  var TKK, key = NaN;
-  var code = scripts.match(/TKK=eval\(\'\(.*\)\'\);/g)[0];
-  eval(code);
-  key = parseFloat(TKK);
-
-  if (isNaN(key) === true) {
-    throw new Error('key is not found');
-  }
-
-  var querystring = UrlFormat({
+  return HOST + '/translate_tts' + UrlFormat({
     query: {
       ie: 'UTF-8',
       q: word,    // encodeURIComponent
@@ -63,12 +78,10 @@ module.exports = async function (word) {
       total: 1,
       idx: 0,
       textlen: word.length,
-      tk: token(word, key),
+      tk: token(word, await key()),
       client: 't',
       prev: 'input',
       ttsspeed: 1   // slow = 0.24
     }
   });
-
-  return HOST + '/translate_tts' + querystring;
 };
