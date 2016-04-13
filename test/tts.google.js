@@ -1,3 +1,4 @@
+var fetch  = require('node-fetch');
 var rewire = require('rewire');
 var chai   = require('chai');
 var expect = chai.expect;
@@ -5,52 +6,52 @@ var expect = chai.expect;
 // setup promise
 chai.use(require('chai-as-promised'));
 
+// mock console.log
 var google = rewire('../src/tts/google');
-describe('tts.google', function() {
+google.__set__({
+  console: {
+    log: function () {}
+  }
+});
 
-  before(function () {
-    // mock console.log
-    google.__set__({
-      console: {
-        log: function () {}
-      }
-    });
-  });
+function checkHttpStatus (word) {
+  return expect(
+    google(word)
+      .then(function (url) { return fetch(url) })
+      .then(function (res) { return res.status })
+  ).to.eventually.equal(200);
+}
+
+describe('tts.google', function() {
 
   it('Hello', function () {
     var word = 'Hello';
-    return expect(google(word)).to.eventually.match(/q=hello/);
-    return expect(google(word)).to.eventually.match(/textlen=5/);
+    return checkHttpStatus(word);
   });
 
   it('hello', function () {
     var word = 'hello';
-    return expect(google(word)).to.eventually.match(/q=hello/);
-    return expect(google(word)).to.eventually.match(/textlen=5/);
+    return checkHttpStatus(word);
   });
 
   it('hello world', function () {
     var word = 'hello world';
-    return expect(google(word)).to.eventually.match(/q=hello%20world/);
-    return expect(google(word)).to.eventually.match(/textlen=11/);
+    return checkHttpStatus(word);
   });
 
   it('Hello_World', function () {
     var word = 'Hello_World';
-    return expect(google(word)).to.eventually.match(/q=hello%20world/);
-    return expect(google(word)).to.eventually.match(/textlen=11/);
+    return checkHttpStatus(word);
   });
 
   it('how_are_you', function () {
     var word = 'how_are_you';
-    return expect(google(word)).to.eventually.match(/q=how%20are%20you/);
-    return expect(google(word)).to.eventually.match(/textlen=11/);
+    return checkHttpStatus(word);
   });
 
   it('123', function () {
     var word = '123';
-    return expect(google(word)).to.eventually.match(/q=123/);
-    return expect(google(word)).to.eventually.match(/textlen=3/);
+    return checkHttpStatus(word);
   });
 
   it('(null)', function () {
