@@ -1,11 +1,18 @@
-env:
-  es6: true
-  node: true
-
-parser: babel-eslint
-rules:
-  strict: 0
-  indent: [2, 2, {SwitchCase: 1}]
-  linebreak-style: [2, unix]
-  semi: [1, always]
-  no-console: 0
+{
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent":          ["error", 2, {"SwitchCase": 1}],
+    "linebreak-style": ["error", "unix"],
+    "semi":            ["error", "always"],
+    "no-console":      ["off"]
+  }
+}
