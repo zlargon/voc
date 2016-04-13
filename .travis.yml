@@ -7,7 +7,7 @@ node_js:
   - "5"
   - "node"
 
-before_script:
+before_install:
   - "npm -g install npm@latest"
 
 script:
