@@ -1,6 +1,6 @@
-var util      = require('util');
-var fetch     = require('node-fetch');
-var cheerio   = require('cheerio');
+'use strict';
+const fetch   = require('node-fetch');
+const cheerio = require('cheerio');
 
 module.exports = async function (word) {
   if (typeof word !== 'string' || word.length === 0) {
@@ -10,29 +10,24 @@ module.exports = async function (word) {
   // replace '_' to ' ', and convert to lower case
   word = word.replace(/_/g, ' ').toLowerCase();
 
-  var url = 'http://www.merriam-webster.com/dictionary/' + word;
-  var res = await fetch(url, {
+  const url = 'http://www.merriam-webster.com/dictionary/' + word;
+  const res = await fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
-    var err = new Error(word + ' is not found from webster');
+    let err = new Error(word + ' is not found from webster');
     err.code = 'ENOENT';
     throw err;
   }
 
-  var html = await res.text();
-  var $ = cheerio.load(html);
-
-  var map = {};
-  var list = [];
-  $('.word-and-pronunciation .play-pron').each(function (index, element) {
-    var ele  = $(element);
-    var audio = util.format(
-      'http://media.merriam-webster.com/audio/prons/%s/mp3/%s/%s.mp3',
-      ele.attr('data-lang').replace(/_/g, '/'),
-      ele.attr('data-dir'),
-      ele.attr('data-file')
-    );
+  let map = {}, list = [];
+  const $ = cheerio.load(await res.text());
+  $('.word-and-pronunciation .play-pron').each((index, element) => {
+    const ele = $(element);
+    const lang = ele.attr('data-lang').replace(/_/g, '/');
+    const dir  = ele.attr('data-dir');
+    const file = ele.attr('data-file')
+    const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`
 
     if (map.hasOwnProperty(audio) === false) {
       map[audio] = true;
@@ -41,16 +36,15 @@ module.exports = async function (word) {
   });
 
   if (list.length === 0) {
-    err = new Error(word + ' is not found from webster');
+    let err = new Error(word + ' is not found from webster');
     err.code = 'ENOENT';
     throw err;
   }
 
   // show all the audio url
   if (list.length > 1) {
-    list.forEach(function (audio, i) {
-      i++;
-      console.log(i + '. ' + audio);
+    list.forEach((audio, i) => {
+      console.log(`${i+1}. ${audio}`);
     });
   }
 
