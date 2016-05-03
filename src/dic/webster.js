@@ -3,37 +3,55 @@ const fetch   = require('node-fetch');
 const cheerio = require('cheerio');
 
 module.exports = async function (word) {
+  const HOST = 'http://www.merriam-webster.com';
+
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
 
   // replace '_' to ' ', and convert to lower case
   word = word.replace(/_/g, ' ').toLowerCase();
-
-  const url = 'http://www.merriam-webster.com/dictionary/' + word;
+  const url = `${HOST}/autocomplete?term=${word}&ref=dictionary`;
   const res = await fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
-    let err = new Error(word + ' is not found from webster');
+    let err = new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
     err.code = 'ENOENT';
     throw err;
   }
-
-  let map = {}, list = [];
-  const $ = cheerio.load(await res.text());
-  $('.word-and-pronunciation .play-pron').each((index, element) => {
-    const ele = $(element);
-    const lang = ele.attr('data-lang').replace(/_/g, '/');
-    const dir  = ele.attr('data-dir');
-    const file = ele.attr('data-file')
-    const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`
-
-    if (map.hasOwnProperty(audio) === false) {
-      map[audio] = true;
-      list.push(audio);
+  const urlList = (await res.json()).reduce((arr, item) => {
+    if (item.label.toLowerCase() === word) {
+      arr.push(HOST + item.link);
     }
-  });
+    return arr;
+  }, []);
+
+  let list = [], map = {};
+  for (let i = 0; i < urlList.length; i++) {
+    const url = urlList[i];
+    const res = await fetch(url, {
+      timeout: 10 * 1000
+    });
+    if (res.status !== 200) {
+      console.error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
+      continue;
+    }
+
+    const $ = cheerio.load(await res.text());
+    $('.word-and-pronunciation .play-pron').each((index, element) => {
+      const ele = $(element);
+      const lang = ele.attr('data-lang').replace(/_/g, '/');
+      const dir  = ele.attr('data-dir');
+      const file = ele.attr('data-file')
+      const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`
+
+      if (map.hasOwnProperty(audio) === false) {
+        map[audio] = true;
+        list.push(audio);
+      }
+    });
+  }
 
   if (list.length === 0) {
     let err = new Error(word + ' is not found from webster');
