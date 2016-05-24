@@ -1,11 +1,24 @@
+require('babel-polyfill');
+
 var path     = require('path');
 var util     = require('util');
 var fs       = require('fs');
 var program  = require('commander');
-var exec     = require('child_process').execSync;
+var child    = require('child_process');
 var getAudio = require('./getAudio');
 var config   = require('../config.json');
 var pkg      = require('../package.json');
+
+function exec (command) {
+  return new Promise((resolve, reject) => {
+    child.exec(command, (err, stdout, stderr) => {
+      if (err) {
+        throw err;
+      }
+      resolve(stdout | stderr);
+    });
+  });
+}
 
 function list () {
   for (var key in config) {
@@ -133,7 +146,7 @@ module.exports = async function (process_argv) {
   // 6. test audio player command line
   var cli = config.audio_cli.split(' ')[0];
   try {
-    exec('which ' + cli);
+    await exec('which ' + cli);
   } catch (e) {
     console.log('\naudio player command line "' + cli + '" is not found.\n');
 
@@ -155,7 +168,8 @@ module.exports = async function (process_argv) {
   }
 
   // 7. play audio
-  audios.forEach(function (audio) {
+  for (let i = 0; i < audios.length; i++) {
+    let audio = audios[i];
     if (audio.path === null) {
       console.log("'%s' is not found%s", audio.word, service ? ' from ' + service : '');
       return;
@@ -163,6 +177,6 @@ module.exports = async function (process_argv) {
 
     console.log("play '%s' ...", path.basename(audio.path));
     var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
-    exec(cmd);
-  });
+    await exec(cmd);
+  }
 };
