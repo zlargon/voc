@@ -11,7 +11,7 @@ module.exports = async function (word) {
   word = word.replace(/_/g, ' ').toLowerCase();
 
   var HOST = 'http://www.collinsdictionary.com';
-  var url = HOST + '/search/autocomplete/AMERICAN_LEARNER_DICTIONARY?term=' + word;
+  var url = HOST + '/autocomplete/?dictCode=english&q=' + word;
   var res = await fetch(url, {
     timeout: 10 * 1000
   });
@@ -38,7 +38,7 @@ module.exports = async function (word) {
   }
 
   // get the word page
-  url = HOST + '/dictionary/american-cobuild-learners/' + word.replace(/ /g, '-');
+  url = HOST + '/dictionary/english/' + word.replace(/ /g, '-');
   res = await fetch(url, {
     timeout: 10 * 1000
   });
