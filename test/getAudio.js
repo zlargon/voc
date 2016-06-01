@@ -60,17 +60,7 @@ describe('Get Audio', function() {
   it('test-drive', function () {
     this.timeout(10000);
     var word = 'test-drive';
-    return expect(getAudio(word, __dirname, 'collins')).to.eventually.equal(
-      path.resolve(__dirname, 'test-drive.mp3')
-    );
-  });
-
-  it('Test_Case (from collins education)', function () {
-    this.timeout(10000);
-    var word = 'Test_Case';
-    return expect(getAudio(word, __dirname, 'collinsEducation')).to.eventually.equal(
-      path.resolve(__dirname, 'test_case.mp3')
-    );
+    return expect(getAudio(word, __dirname, 'collins')).to.be.rejectedWith(Error);
   });
 
   it('testing (from google)', function () {
