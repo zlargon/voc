@@ -50,8 +50,7 @@ Options:
   -V, --version      output the version number
   -w, --webster      force download audio from webster
   -y, --yahoo        force download audio from yahoo
-  -C, --collins      force download audio from collins
-  -c, --collins-edu  force download audio from collins education
+  -c, --collins      force download audio from collins
   -g, --google       force download audio from google
   -i, --ispeech      force download audio from ispeech
   -v, --voicerss     force download audio from voicerss

@@ -85,8 +85,7 @@ module.exports = async function (process_argv) {
     .version(pkg.version)
     .option('-w, --webster',     "force download audio from webster")
     .option('-y, --yahoo',       "force download audio from yahoo")
-    .option('-C, --collins',     "force download audio from collins")
-    .option('-c, --collins-edu', "force download audio from collins education")
+    .option('-c, --collins',     "force download audio from collins")
     .option('-g, --google',      "force download audio from google")
     .option('-i, --ispeech',     "force download audio from ispeech")
     .option('-v, --voicerss',    "force download audio from voicerss")
@@ -110,13 +109,12 @@ module.exports = async function (process_argv) {
 
   // 4. choice the service
   var service = null;
-  if (program.collins)    service = 'collins';
-  if (program.yahoo)      service = 'yahoo';
-  if (program.collinsEdu) service = 'collinsEducation';
-  if (program.webster)    service = 'webster';
-  if (program.google)     service = 'google';
-  if (program.ispeech)    service = 'ispeech';
-  if (program.voicerss)   service = 'voicerss';
+  if (program.yahoo)    service = 'yahoo';
+  if (program.collins)  service = 'collins';
+  if (program.webster)  service = 'webster';
+  if (program.google)   service = 'google';
+  if (program.ispeech)  service = 'ispeech';
+  if (program.voicerss) service = 'voicerss';
 
   // 5. get audio path (download audio)
   var audios = [];

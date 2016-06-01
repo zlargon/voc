@@ -4,19 +4,14 @@ module.exports = {
     getUrl: require('./dic/webster')
   },
 
-  collinsEducation: {
+  collins: {
     type: 'dic',
-    getUrl: require('./dic/collins-education')
+    getUrl: require('./dic/collins')
   },
 
   yahoo: {
     type: 'dic',
     getUrl: require('./dic/yahoo')
-  },
-
-  collins: {
-    type: 'dic',
-    getUrl: require('./dic/collins')
   },
 
   google: {
