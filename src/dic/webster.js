@@ -43,8 +43,8 @@ module.exports = async function (word) {
       const ele = $(element);
       const lang = ele.attr('data-lang').replace(/_/g, '/');
       const dir  = ele.attr('data-dir');
-      const file = ele.attr('data-file')
-      const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`
+      const file = ele.attr('data-file');
+      const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`;
 
       if (map.hasOwnProperty(audio) === false) {
         map[audio] = true;

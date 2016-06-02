@@ -13,9 +13,10 @@ function exec (command) {
   return new Promise((resolve, reject) => {
     child.exec(command, (err, stdout, stderr) => {
       if (err) {
-        throw err;
+        reject(err);
+      } else {
+        resolve(stdout | stderr);
       }
-      resolve(stdout | stderr);
     });
   });
 }
