@@ -22,12 +22,15 @@ module.exports = async function (word) {
   }
   const urlList = (await res.json()).reduce((arr, item) => {
     if (item.label.toLowerCase() === word) {
-      arr.push(HOST + item.link);
+      // show_cat: false, link: "/dictionary/sherry"
+      // show_cat: true,  link: "http://www.spanishcentral.com/translate/sherry"
+      const link = (item.show_cat ? '' : HOST) + item.link;
+      arr.push(link);
     }
     return arr;
   }, []);
 
-  let list = [], map = {};
+  let map = {};
   for (let i = 0; i < urlList.length; i++) {
     const url = urlList[i];
     const res = await fetch(url, {
@@ -48,11 +51,11 @@ module.exports = async function (word) {
 
       if (map.hasOwnProperty(audio) === false) {
         map[audio] = true;
-        list.push(audio);
       }
     });
   }
 
+  const list = Object.keys(map);
   if (list.length === 0) {
     let err = new Error(word + ' is not found from webster');
     err.code = 'ENOENT';

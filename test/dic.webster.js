@@ -1,3 +1,4 @@
+var fetch  = require('node-fetch');
 var rewire = require('rewire');
 var chai   = require('chai');
 var expect = chai.expect;
@@ -5,40 +6,46 @@ var expect = chai.expect;
 // setup promise
 chai.use(require('chai-as-promised'));
 
+// mock console.log
 var webster = rewire('../src/dic/webster');
-describe('dic.webster', function() {
+webster.__set__({
+  console: {
+    log: function () {}
+  }
+});
 
-  before(function () {
-      // mock console.log
-      webster.__set__({
-        console: {
-          log: function () {}
-        }
-      });
-    });
+function checkHttpStatus (word) {
+  return expect(
+    webster(word)
+      .then(function (url) { return fetch(url) })
+      .then(function (res) { return res.status })
+  ).to.eventually.equal(200);
+}
+
+describe('dic.webster', function() {
 
   it('Hello', function () {
     this.timeout(10000);
     var word = 'Hello';
-    return expect(webster(word)).to.eventually.equal(
-      'http://media.merriam-webster.com/audio/prons/en/us/mp3/h/hello001.mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('test', function () {
     this.timeout(10000);
     var word = 'test';
-    return expect(webster(word)).to.eventually.equal(
-      'http://media.merriam-webster.com/audio/prons/en/us/mp3/t/test0001.mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('affiliate', function () {
     this.timeout(10000);
     var word = 'affiliate';
-    return expect(webster(word)).to.eventually.equal(
-      'http://media.merriam-webster.com/audio/prons/en/us/mp3/a/affili01.mp3'
-    );
+    return checkHttpStatus(word);
+  });
+
+  it('sherry (test show_cat)', function () {
+    this.timeout(10000);
+    var word = 'sherry';
+    return checkHttpStatus(word);
   });
 
   it('askdjalksjdl', function () {
