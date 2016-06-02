@@ -4,3 +4,4 @@ appveyor.yml
 .travis.yml
 .babelrc
 .eslintrc
+CHANGELOG.md

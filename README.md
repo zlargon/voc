@@ -25,6 +25,10 @@ Text-To-Speech:
  - [iSpeech](http://www.ispeech.org/)
  - [Voice RSS](http://www.voicerss.org/)
 
+## Changed History
+
+[see CHANGELOG](https://github.com/zlargon/voc/blob/master/CHANGELOG.md)
+
 ## Installation
 
 ```
