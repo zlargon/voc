@@ -28,7 +28,6 @@ describe('Get Audio', function() {
   after(removeAudio);
 
   it('test', function () {
-    this.timeout(10000);
     var word = 'test';
     return expect(getAudio(word, __dirname)).to.eventually.equal(
       path.resolve(__dirname, 'test.mp3')
@@ -36,7 +35,6 @@ describe('Get Audio', function() {
   });
 
   it('Hello', function () {
-    this.timeout(10000);
     var word = 'Hello';
     return expect(getAudio(word, __dirname)).to.eventually.equal(
       path.resolve(__dirname, 'hello.mp3')
@@ -52,19 +50,16 @@ describe('Get Audio', function() {
   });
 
   it('testing (from webster)', function () {
-    this.timeout(10000);
     var word = 'testing';
     return expect(getAudio(word, __dirname, 'webster')).to.eventually.be.rejected;
   });
 
   it('test-drive', function () {
-    this.timeout(10000);
     var word = 'test-drive';
     return expect(getAudio(word, __dirname, 'collins')).to.be.rejectedWith(Error);
   });
 
   it('testing (from google)', function () {
-    this.timeout(10000);
     var word = 'testing';
     return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
       path.resolve(__dirname, 'testing.mp3')
@@ -72,7 +67,6 @@ describe('Get Audio', function() {
   });
 
   it('Hello_World (from google)', function () {
-    this.timeout(10000);
     var word = 'Hello_World';
     return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
       path.resolve(__dirname, 'hello_world.mp3')
@@ -80,7 +74,6 @@ describe('Get Audio', function() {
   });
 
   it('great (from ispeech)', function () {
-    this.timeout(10000);
     var word = 'great';
     return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
       path.resolve(__dirname, 'great.mp3')
@@ -88,7 +81,6 @@ describe('Get Audio', function() {
   });
 
   it('Have_A_Nice_Day (from ispeech)', function () {
-    this.timeout(10000);
     var word = 'Have_A_Nice_Day';
     return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
       path.resolve(__dirname, 'have_a_nice_day.mp3')
@@ -96,7 +88,6 @@ describe('Get Audio', function() {
   });
 
   it('perfect (from voicerss)', function () {
-    this.timeout(10000);
     var word = 'perfect';
     return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
       path.resolve(__dirname, 'perfect.mp3')
@@ -104,7 +95,6 @@ describe('Get Audio', function() {
   });
 
   it('today_is_sunday (from voicerss)', function () {
-    this.timeout(10000);
     var word = 'today_is_sunday';
     return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
       path.resolve(__dirname, 'today_is_sunday.mp3')
@@ -112,7 +102,6 @@ describe('Get Audio', function() {
   });
 
   it('askdjalksjdl', function () {
-    this.timeout(10000);
     var word = 'askdjalksjdl';
     return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
   });
@@ -130,13 +119,11 @@ describe('Get Audio', function() {
   });
 
   it('123 (string)', function () {
-    this.timeout(10000);
     var word = '123';
     return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
   });
 
   it('(Empty String)', function () {
-    this.timeout(10000);
     var word = '';
     return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
   });

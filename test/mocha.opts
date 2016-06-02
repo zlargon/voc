@@ -1,3 +1,4 @@
 --compilers js:babel-register
 --require babel-polyfill
 --reporter spec
+--timeout 10000

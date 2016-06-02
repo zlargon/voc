@@ -25,49 +25,41 @@ function checkHttpStatus (word) {
 describe('dic.webster', function() {
 
   it('Hello', function () {
-    this.timeout(10000);
     var word = 'Hello';
     return checkHttpStatus(word);
   });
 
   it('test', function () {
-    this.timeout(10000);
     var word = 'test';
     return checkHttpStatus(word);
   });
 
   it('affiliate', function () {
-    this.timeout(10000);
     var word = 'affiliate';
     return checkHttpStatus(word);
   });
 
   it('sherry (test show_cat)', function () {
-    this.timeout(10000);
     var word = 'sherry';
     return checkHttpStatus(word);
   });
 
   it('askdjalksjdl', function () {
-    this.timeout(10000);
     var word = 'askdjalksjdl';
     return expect(webster(word)).to.eventually.be.rejected;
   });
 
   it('(null)', function () {
-    this.timeout(10000);
     var word = null;
     return expect(webster(word)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (number)', function () {
-    this.timeout(10000);
     var word = 123;
     return expect(webster(word)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (string)', function () {
-    this.timeout(10000);
     var word = '123';
     return expect(webster(word)).to.eventually.be.rejected;
   });
