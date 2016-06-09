@@ -1,6 +1,7 @@
 'use strict';
 const fetch   = require('node-fetch');
 const cheerio = require('cheerio');
+const resolve = require('url').resolve;
 
 module.exports = async function (word) {
   const HOST = 'http://www.merriam-webster.com';
@@ -22,9 +23,9 @@ module.exports = async function (word) {
   }
   const urlList = (await res.json()).reduce((arr, item) => {
     if (item.label.toLowerCase() === word) {
-      // show_cat: false, link: "/dictionary/sherry"
-      // show_cat: true,  link: "http://www.spanishcentral.com/translate/sherry"
-      const link = (item.show_cat ? '' : HOST) + item.link;
+      // link: "/dictionary/sherry"
+      // link: "http://www.spanishcentral.com/translate/sherry"
+      const link = resolve(HOST, item.link);
       arr.push(link);
     }
     return arr;

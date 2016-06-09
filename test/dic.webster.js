@@ -39,8 +39,13 @@ describe('dic.webster', function() {
     return checkHttpStatus(word);
   });
 
-  it('sherry (test show_cat)', function () {
+  it('sherry (link resolve)', function () {
     var word = 'sherry';
+    return checkHttpStatus(word);
+  });
+
+  it('homicide (link resolve)', function () {
+    var word = 'homicide';
     return checkHttpStatus(word);
   });
 
