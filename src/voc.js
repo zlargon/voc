@@ -1,12 +1,14 @@
 require('babel-polyfill');
 
-var path     = require('path');
-var fs       = require('fs');
-var program  = require('commander');
-var child    = require('child_process');
-var getAudio = require('./getAudio');
-var config   = require('../config.json');
-var pkg      = require('../package.json');
+const _async_  = require('co').wrap;
+const path     = require('path');
+const fs       = require('fs');
+const program  = require('commander');
+const child    = require('child_process');
+const getAudio = require('./getAudio');
+const pkg      = require('../package.json');
+
+let config   = require('../config.json');
 
 function exec (command) {
   return new Promise((resolve, reject) => {
@@ -73,7 +75,7 @@ function setAudioDirectory (path) {
   save();
 }
 
-module.exports = async function (process_argv) {
+module.exports = _async_(function * (process_argv) {
   // 1. init config
   if (config.directory === '') {
     reset();
@@ -119,7 +121,7 @@ module.exports = async function (process_argv) {
   // 5. test audio player command line
   let cli = config.audio_cli.split(' ')[0];
   try {
-    await exec('which ' + cli);
+    yield exec('which ' + cli);
   } catch (e) {
     console.log(`\naudio player command line "${cli}" is not found.\n`);
 
@@ -152,7 +154,7 @@ module.exports = async function (process_argv) {
 
     let audio = null;
     try {
-      audio = await getAudio(word, config.directory, service);
+      audio = yield getAudio(word, config.directory, service);
     } catch (e) {
       if (e.code !== 'ENOENT') {
         throw e;
@@ -165,6 +167,6 @@ module.exports = async function (process_argv) {
     }
 
     console.log(`play '${path.basename(audio)}' ...`);
-    await exec(`${config.audio_cli} "${audio}"`);
+    yield exec(`${config.audio_cli} "${audio}"`);
   }
-};
+});

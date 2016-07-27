@@ -1,8 +1,9 @@
-var util      = require('util');
-var fetch     = require('node-fetch');
-var cheerio   = require('cheerio');
+const _async_ = require('co').wrap;
+const util    = require('util');
+const fetch   = require('node-fetch');
+const cheerio = require('cheerio');
 
-module.exports = async function (word) {
+module.exports = _async_(function * (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -12,7 +13,7 @@ module.exports = async function (word) {
 
   var HOST = 'http://www.collinsdictionary.com';
   var url = HOST + '/autocomplete/?dictCode=english&q=' + word;
-  var res = await fetch(url, {
+  var res = yield fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -22,7 +23,7 @@ module.exports = async function (word) {
 
   // find the word from list
   var isFound = false;
-  var list = JSON.parse(await res.text());
+  var list = JSON.parse(yield res.text());
   for (var i = 0; i < list.length; i++) {
     if (list[i] === word) {
       isFound = true;
@@ -39,7 +40,7 @@ module.exports = async function (word) {
 
   // get the word page
   url = HOST + '/dictionary/english/' + word.replace(/ /g, '-');
-  res = await fetch(url, {
+  res = yield fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -48,7 +49,7 @@ module.exports = async function (word) {
   }
 
   // parse HTML
-  var $ = cheerio.load(await res.text());
+  var $ = cheerio.load(yield res.text());
 
   list = [];
   var map = {};
@@ -76,4 +77,4 @@ module.exports = async function (word) {
 
   // return the first audio from list
   return list[0];
-};
+});

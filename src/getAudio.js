@@ -1,12 +1,13 @@
 require('babel-polyfill');
 
-var fs       = require('fs');
-var util     = require('util');
-var urlParse = require('url').parse;
-var http     = require('http');
-var https    = require('https');
-var path     = require('path');
-var Service  = require('./service');
+const _async_  = require('co').wrap;
+const fs       = require('fs');
+const util     = require('util');
+const urlParse = require('url').parse;
+const http     = require('http');
+const https    = require('https');
+const path     = require('path');
+const Service  = require('./service');
 
 function getExistAudio (word, directory) {
   var ext = ['.mp3', '.wav'];
@@ -25,19 +26,19 @@ function getExistAudio (word, directory) {
   return null;
 }
 
-var downloadAudio = async function (word, directory, serviceName) {
+var downloadAudio = _async_(function * (word, directory, serviceName) {
   var serv = Service[serviceName];
   if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
 
-  var url = await serv.getUrl(word);
+  var url = yield serv.getUrl(word);
   var ext = serv.ext || path.extname(url);
   var audioName = word + ext;                         // audio.mp3 or audio.wav
   var audioDest = path.resolve(directory, audioName); // audio destination
 
-  await downloadFile(url, audioDest);
+  yield downloadFile(url, audioDest);
   console.log("Download '%s' from %s ...", audioName, serviceName);
   return audioDest;
-};
+});
 
 function downloadFile (url, dest) {
   return new Promise(function (resolve, reject) {
@@ -79,7 +80,7 @@ function downloadFile (url, dest) {
   });
 }
 
-module.exports = async function (word, directory, service) {
+module.exports = _async_(function * (word, directory, service) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -89,7 +90,7 @@ module.exports = async function (word, directory, service) {
 
   // force to download audio from particular service
   if (service) {
-    return await downloadAudio(word, directory, service);
+    return yield downloadAudio(word, directory, service);
   }
 
   // check audio is exist or not
@@ -108,7 +109,7 @@ module.exports = async function (word, directory, service) {
     }
 
     try {
-      return await downloadAudio(word, directory, serv);
+      return yield downloadAudio(word, directory, serv);
     } catch (e) {
       if (e.code !== 'ENOENT') {
         throw e;
@@ -120,4 +121,4 @@ module.exports = async function (word, directory, service) {
   var err = new Error(word + ' is not found');
   err.code = 'ENOENT';
   throw err;
-};
+});

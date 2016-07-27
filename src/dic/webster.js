@@ -1,9 +1,10 @@
 'use strict';
+const _async_ = require('co').wrap;
 const fetch   = require('node-fetch');
 const cheerio = require('cheerio');
 const resolve = require('url').resolve;
 
-module.exports = async function (word) {
+module.exports = _async_(function * (word) {
   const HOST = 'http://www.merriam-webster.com';
 
   if (typeof word !== 'string' || word.length === 0) {
@@ -13,7 +14,7 @@ module.exports = async function (word) {
   // replace '_' to ' ', and convert to lower case
   word = word.replace(/_/g, ' ').toLowerCase();
   const url = `${HOST}/autocomplete?term=${word}&ref=dictionary`;
-  const res = await fetch(url, {
+  const res = yield fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -21,7 +22,7 @@ module.exports = async function (word) {
     err.code = 'ENOENT';
     throw err;
   }
-  const urlList = (await res.json()).reduce((arr, item) => {
+  const urlList = (yield res.json()).reduce((arr, item) => {
     if (item.label.toLowerCase() === word) {
       // link: "/dictionary/sherry"
       // link: "http://www.spanishcentral.com/translate/sherry"
@@ -34,7 +35,7 @@ module.exports = async function (word) {
   let map = {};
   for (let i = 0; i < urlList.length; i++) {
     const url = urlList[i];
-    const res = await fetch(url, {
+    const res = yield fetch(url, {
       timeout: 10 * 1000
     });
     if (res.status !== 200) {
@@ -42,7 +43,7 @@ module.exports = async function (word) {
       continue;
     }
 
-    const $ = cheerio.load(await res.text());
+    const $ = cheerio.load(yield res.text());
     $('.word-and-pronunciation .play-pron').each((index, element) => {
       const ele = $(element);
       const lang = ele.attr('data-lang').replace(/_/g, '/');
@@ -72,4 +73,4 @@ module.exports = async function (word) {
 
   // return the first audio from list
   return list[0];
-};
+});

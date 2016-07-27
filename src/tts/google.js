@@ -1,3 +1,4 @@
+const _async_   = require('co').wrap;
 const UrlFormat = require('url').format;
 const fetch     = require('node-fetch');
 const HOST      = 'https://translate.google.com';
@@ -42,8 +43,8 @@ function token (text, key) {
   return a.toString() + '.' + (a ^ b);
 }
 
-async function key () {
-  const res = await fetch(HOST, {
+const key = _async_(function * () {
+  const res = yield fetch(HOST, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -51,7 +52,7 @@ async function key () {
   }
 
   let TKK = null;
-  const html = await res.text();
+  const html = yield res.text();
   try {
     eval(html.match(/TKK=eval\(\'\(.*\)\'\);/g)[0]);  // TKK = '405291.1334555331'
     if (TKK === null) throw null;
@@ -60,9 +61,9 @@ async function key () {
   }
 
   return TKK;
-}
+});
 
-module.exports = async function (word) {
+module.exports = _async_(function * (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -78,10 +79,10 @@ module.exports = async function (word) {
       total: 1,
       idx: 0,
       textlen: word.length,
-      tk: token(word, await key()),
+      tk: token(word, yield key()),
       client: 't',
       prev: 'input',
       ttsspeed: 1   // slow = 0.24
     }
   });
-};
+});

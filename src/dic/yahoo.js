@@ -1,8 +1,9 @@
-var util      = require('util');
-var fetch     = require('node-fetch');
-var cheerio   = require('cheerio');
+const _async_ = require('co').wrap;
+const util    = require('util');
+const fetch   = require('node-fetch');
+const cheerio = require('cheerio');
 
-module.exports = async function (word) {
+module.exports = _async_(function * (word) {
   if (typeof word !== 'string' || word.length === 0) {
     throw new TypeError('word should be a string');
   }
@@ -11,7 +12,7 @@ module.exports = async function (word) {
   word = word.replace(/_/g, ' ').toLowerCase();
 
   var url = 'http://tw.dictionary.search.yahoo.com/search?p=' + word + '&fr2=dict';
-  var res = await fetch(url, {
+  var res = yield fetch(url, {
     timeout: 10 * 1000
   });
   if (res.status !== 200) {
@@ -19,7 +20,7 @@ module.exports = async function (word) {
     throw new Error(msg);
   }
 
-  var html = await res.text();
+  var html = yield res.text();
   var $ = cheerio.load(html);
 
   var map = {};
@@ -55,4 +56,4 @@ module.exports = async function (word) {
 
   // return the first audio from list
   return list[0];
-};
+});
