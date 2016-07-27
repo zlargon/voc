@@ -1,7 +1,7 @@
 var fetch  = require('node-fetch');
-var rewire  = require('rewire');
-var chai    = require('chai');
-var expect  = chai.expect;
+var rewire = require('rewire');
+var chai   = require('chai');
+var expect = chai.expect;
 
 // setup promise
 chai.use(require('chai-as-promised'));

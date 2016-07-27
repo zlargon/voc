@@ -1,3 +1,4 @@
+var fetch  = require('node-fetch');
 var rewire = require('rewire');
 var chai   = require('chai');
 var expect = chai.expect;
@@ -5,37 +6,37 @@ var expect = chai.expect;
 // setup promise
 chai.use(require('chai-as-promised'));
 
+// mock console.log
 var yahoo = rewire('../src/dic/yahoo');
-describe('dic.yahoo', function() {
+yahoo.__set__({
+  console: {
+    log: function () {}
+  }
+});
 
-  before(function () {
-    // mock console.log
-    yahoo.__set__({
-      console: {
-        log: function () {}
-      }
-    });
-  });
+function checkHttpStatus (word) {
+  return expect(
+    yahoo(word)
+      .then(function (url) { return fetch(url) })
+      .then(function (res) { return res.status })
+  ).to.eventually.equal(200);
+}
+
+describe('dic.yahoo', function() {
 
   it('Hello', function () {
     var word = 'Hello';
-    return expect(yahoo(word)).to.eventually.equal(
-      'https://s.yimg.com/tn/dict/dreye/live/f/hello.mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('test', function () {
     var word = 'test';
-    return expect(yahoo(word)).to.eventually.equal(
-      'https://s.yimg.com/tn/dict/dreye/live/f/test.mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('cactus', function () {
     var word = 'cactus';
-    return expect(yahoo(word)).to.eventually.equal(
-      'https://s.yimg.com/tn/dict/dreye/live/m/cactus.mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('askdjalksjdl', function () {

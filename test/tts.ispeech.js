@@ -1,3 +1,4 @@
+var fetch  = require('node-fetch');
 var rewire = require('rewire');
 var chai   = require('chai');
 var expect = chai.expect;
@@ -5,7 +6,22 @@ var expect = chai.expect;
 // setup promise
 chai.use(require('chai-as-promised'));
 
+// mock console.log
 var ispeech = rewire('../src/tts/ispeech');
+ispeech.__set__({
+  console: {
+    log: function () {}
+  }
+});
+
+function checkHttpStatus (word) {
+  return expect(
+    ispeech(word)
+      .then(function (url) { return fetch(url) })
+      .then(function (res) { return res.status })
+  ).to.eventually.equal(200);
+}
+
 describe('tts.ispeech', function() {
 
   before(function () {
@@ -19,44 +35,32 @@ describe('tts.ispeech', function() {
 
   it('Hello', function () {
     var word = 'Hello';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=hello'
-    );
+    return checkHttpStatus(word);
   });
 
   it('hello', function () {
     var word = 'hello';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=hello'
-    );
+    return checkHttpStatus(word);
   });
 
   it('hello world', function () {
     var word = 'hello world';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=hello%20world'
-    );
+    return checkHttpStatus(word);
   });
 
   it('Hello_World', function () {
     var word = 'Hello_World';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=hello%20world'
-    );
+    return checkHttpStatus(word);
   });
 
   it('how_are_you', function () {
     var word = 'how_are_you';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=how%20are%20you'
-    );
+    return checkHttpStatus(word);
   });
 
   it('123', function () {
     var word = '123';
-    return expect(ispeech(word)).to.eventually.equal(
-      'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=59e482ac28dd52db23a22aff4ac1d31e&voice=usenglishmale&speed=0&text=123'
-    );
+    return checkHttpStatus(word);
   });
 
   it('(null)', function () {

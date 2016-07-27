@@ -1,3 +1,4 @@
+var fetch  = require('node-fetch');
 var rewire = require('rewire');
 var chai   = require('chai');
 var expect = chai.expect;
@@ -5,58 +6,52 @@ var expect = chai.expect;
 // setup promise
 chai.use(require('chai-as-promised'));
 
+// mock console.log
 var voicerss = rewire('../src/tts/voicerss');
-describe('tts.voicerss', function() {
+voicerss.__set__({
+  console: {
+    log: function () {}
+  }
+});
 
-  before(function () {
-    // mock console.log
-    voicerss.__set__({
-      console: {
-        log: function () {}
-      }
-    });
-  });
+function checkHttpStatus (word) {
+  return expect(
+    voicerss(word)
+      .then(function (url) { return fetch(url) })
+      .then(function (res) { return res.status })
+  ).to.eventually.equal(200);
+}
+
+describe('tts.voicerss', function() {
 
   it('Hello', function () {
     var word = 'Hello';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=hello&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('hello', function () {
     var word = 'hello';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=hello&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('hello world', function () {
     var word = 'hello world';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=hello%20world&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('Hello_World', function () {
     var word = 'Hello_World';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=hello%20world&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('how_are_you', function () {
     var word = 'how_are_you';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=how%20are%20you&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('123', function () {
     var word = '123';
-    return expect(voicerss(word)).to.eventually.equal(
-      'http://www.voicerss.org/controls/speech.ashx?hl=en-us&src=123&c=mp3'
-    );
+    return checkHttpStatus(word);
   });
 
   it('(null)', function () {
