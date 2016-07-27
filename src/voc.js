@@ -1,7 +1,6 @@
 require('babel-polyfill');
 
 var path     = require('path');
-var util     = require('util');
 var fs       = require('fs');
 var program  = require('commander');
 var child    = require('child_process');
@@ -109,7 +108,7 @@ module.exports = async function (process_argv) {
   }
 
   // 4. choice the service
-  var service = null;
+  let service = null;
   if (program.yahoo)    service = 'yahoo';
   if (program.collins)  service = 'collins';
   if (program.webster)  service = 'webster';
@@ -117,37 +116,12 @@ module.exports = async function (process_argv) {
   if (program.ispeech)  service = 'ispeech';
   if (program.voicerss) service = 'voicerss';
 
-  // 5. get audio path (download audio)
-  var audios = [];
-  for (var i = 0; i < program.args.length; i++) {
-    var word = program.args[i].replace(/ /g, '_');
-
-    // remove extension '.mp3 or .wav' if any
-    var reg = /.(mp3|wav)$/;
-    if (word.length > 4 && reg.test(word) === true) {
-      word = word.slice(0, -4);
-    }
-
-    audios[i] = {
-      word: word,
-      path: null
-    };
-
-    try {
-      audios[i].path = await getAudio(word, config.directory, service);
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        throw e;
-      }
-    }
-  }
-
-  // 6. test audio player command line
-  var cli = config.audio_cli.split(' ')[0];
+  // 5. test audio player command line
+  let cli = config.audio_cli.split(' ')[0];
   try {
     await exec('which ' + cli);
   } catch (e) {
-    console.log('\naudio player command line "' + cli + '" is not found.\n');
+    console.log(`\naudio player command line "${cli}" is not found.\n`);
 
     switch (cli) {
       case 'dlc':
@@ -166,16 +140,31 @@ module.exports = async function (process_argv) {
     return;
   }
 
-  // 7. play audio
-  for (let i = 0; i < audios.length; i++) {
-    let audio = audios[i];
-    if (audio.path === null) {
-      console.log("'%s' is not found%s", audio.word, service ? ' from ' + service : '');
-      return;
+  // 6. download and play audio
+  for (let i = 0; i < program.args.length; i++) {
+    let word = program.args[i].replace(/ /g, '_');
+
+    // remove extension '.mp3 or .wav' if any
+    let reg = /\.(mp3|wav)$/;
+    if (word.length > 4 && reg.test(word) === true) {
+      word = word.slice(0, -4);
     }
 
-    console.log("play '%s' ...", path.basename(audio.path));
-    var cmd = util.format('%s "%s"', config.audio_cli, audio.path);
-    await exec(cmd);
+    let audio = null;
+    try {
+      audio = await getAudio(word, config.directory, service);
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        throw e;
+      }
+    }
+
+    if (audio === null) {
+      console.log(`'${word}' is not found${service ? ' from ' + service : ''}`);
+      continue;
+    }
+
+    console.log(`play '${path.basename(audio)}' ...`);
+    await exec(`${config.audio_cli} "${audio}"`);
   }
 };
