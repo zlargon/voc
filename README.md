@@ -18,6 +18,7 @@ Dictionary:
  - [Webster](http://www.merriam-webster.com/)
  - [Collins](http://www.collinsdictionary.com/)
  - [Yahoo](http://tw.dictionary.search.yahoo.com)
+ - [The Free Dictionary](http://www.thefreedictionary.com/)
 
 Text-To-Speech:
 
@@ -55,6 +56,7 @@ Options:
   -w, --webster      force download audio from webster
   -y, --yahoo        force download audio from yahoo
   -c, --collins      force download audio from collins
+  -f, --freedic      force download audio from freedictionary
   -g, --google       force download audio from google
   -i, --ispeech      force download audio from ispeech
   -v, --voicerss     force download audio from voicerss

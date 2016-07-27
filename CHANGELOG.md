@@ -1,3 +1,14 @@
+## 1.8.0 (July 28, 2016)
+
+- support [The Free Dictionary](http://www.thefreedictionary.com/) with option `-f, --freedic`.
+- download and play audio one by one.
+- update package dependencies and add new package [`co`](https://github.com/tj/co).
+- fully migrate to ES2015, and remove Stage-0 syntax `async/await`.
+
+### Yahoo
+
+- search and check the words before download the audio
+
 ## 1.7.1 (June 10, 2016)
 
 ### Webster
