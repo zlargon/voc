@@ -1,77 +1,72 @@
 'use strict';
 const _async_   = require('co').wrap;
-const util      = require('util');
 const fetch     = require('node-fetch');
 const cheerio   = require('cheerio');
 const normalize = require('../lib/normalize');
+const HOST      = 'http://www.collinsdictionary.com';
 
-module.exports = _async_(function * (word) {
-  word = normalize(word);
-
-  var HOST = 'http://www.collinsdictionary.com';
-  var url = HOST + '/autocomplete/?dictCode=english&q=' + word;
-  var res = yield fetch(url, {
-    timeout: 10 * 1000
-  });
+// 1. search word
+const isWordExist = _async_(function * (word) {
+  const url = `${HOST}/autocomplete/?dictCode=english&q=${word}`;
+  const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
-    var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
-    throw new Error(msg);
+    throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  // find the word from list
-  var isFound = false;
-  var list = JSON.parse(yield res.text());
-  for (var i = 0; i < list.length; i++) {
+  const list = yield res.json();
+  for (let i = 0; i < list.length; i++) {
     if (list[i] === word) {
-      isFound = true;
-      break;
+      return true;
     }
   }
+  return false;
+});
 
-  // word is not found
-  if (isFound === false) {
-    var err = new Error(word + ' is not found from collins');
-    err.code = 'ENOENT';
-    throw err;
-  }
-
-  // get the word page
-  url = HOST + '/dictionary/english/' + word.replace(/ /g, '-');
-  res = yield fetch(url, {
-    timeout: 10 * 1000
-  });
+// 2. get audio list
+const getAudioList = _async_(function * (word) {
+  const url = `${HOST}/dictionary/english/${word.replace(/ /g, '-')}`;
+  const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
-    msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
-    throw new Error(msg);
+    throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
   // parse HTML
-  var $ = cheerio.load(yield res.text());
+  const $ = cheerio.load(yield res.text());
 
-  list = [];
-  var map = {};
+  const set = {};
   $('a.hwd_sound').each(function (index, ele) {
-    var audio = HOST + $(ele).attr('data-src-mp3');
-    if (map.hasOwnProperty(audio) === false) {
-      map[audio] = true;
-      list.push(audio);
+    const audio = HOST + $(ele).attr('data-src-mp3');
+    if (audio in set === false) {
+      set[audio] = true;
     }
   });
 
+  const list = Object.keys(set);
   if (list.length === 0) {
-    err = new Error(word + ' has no audio from collins');
+    const err = new Error(`'${word}' has no audio from collins`);
     err.code = 'ENOENT';
     throw err;
   }
 
   // show all the audio url
   if (list.length > 1) {
-    list.forEach(function (audio, i) {
-      var num = i + 1;
-      console.log(num + '. ' + audio);
+    list.forEach((audio, i) => {
+      console.log(`${i + 1}. ${audio}`);
     });
   }
 
   // return the first audio from list
   return list[0];
+});
+
+module.exports = _async_(function * (word) {
+  word = normalize(word);
+
+  if (yield isWordExist(word)) {
+    return getAudioList(word);
+  }
+
+  const err = new Error(`${word} is not found from collins`);
+  err.code = 'ENOENT';
+  throw err;
 });
