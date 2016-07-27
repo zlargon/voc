@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+'use strict';
 require('babel-polyfill');
-var voc = require('./voc');
+const voc = require('./voc');
 
 voc(process.argv)
 .catch(e => {

@@ -1,7 +1,13 @@
+'use strict';
 module.exports = {
   webster: {
     type: 'dic',
     getUrl: require('./dic/webster')
+  },
+
+  freedic: {
+    type: 'dic',
+    getUrl: require('./dic/freedictionary')
   },
 
   collins: {
