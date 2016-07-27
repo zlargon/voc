@@ -1,15 +1,12 @@
-const _async_ = require('co').wrap;
-const util    = require('util');
-const fetch   = require('node-fetch');
-const cheerio = require('cheerio');
+'use strict';
+const _async_   = require('co').wrap;
+const util      = require('util');
+const fetch     = require('node-fetch');
+const cheerio   = require('cheerio');
+const normalize = require('../lib/normalize');
 
 module.exports = _async_(function * (word) {
-  if (typeof word !== 'string' || word.length === 0) {
-    throw new TypeError('word should be a string');
-  }
-
-  // replace '_' to ' ', and convert to lower case
-  word = word.replace(/_/g, ' ').toLowerCase();
+  word = normalize(word);
 
   var HOST = 'http://www.collinsdictionary.com';
   var url = HOST + '/autocomplete/?dictCode=english&q=' + word;

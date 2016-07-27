@@ -1,6 +1,8 @@
+'use strict';
 const _async_   = require('co').wrap;
 const UrlFormat = require('url').format;
 const fetch     = require('node-fetch');
+const normalize = require('../lib/normalize');
 const HOST      = 'https://translate.google.com';
 
 function XL (a, b) {
@@ -64,12 +66,7 @@ const key = _async_(function * () {
 });
 
 module.exports = _async_(function * (word) {
-  if (typeof word !== 'string' || word.length === 0) {
-    throw new TypeError('word should be a string');
-  }
-
-  // replace '_' to ' ', and convert to lower case
-  word = word.replace(/_/g, ' ').toLowerCase();
+  word = normalize(word);
 
   return HOST + '/translate_tts' + UrlFormat({
     query: {

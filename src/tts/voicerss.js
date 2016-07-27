@@ -1,13 +1,12 @@
-var UrlFormat = require('url').format;
+'use strict';
+const _async_   = require('co').wrap;
+const UrlFormat = require('url').format;
+const normalize = require('../lib/normalize');
 
-module.exports = function voicerss (word) {
-  if (typeof word !== 'string' || word.length === 0) {
-    return Promise.reject(new TypeError('word should be a string'));
-  }
+module.exports = _async_(function * (word) {
+  word = normalize(word);
 
-  // replace '_' to ' ', and convert to lower case
-  word = word.replace(/_/g, ' ').toLowerCase();
-  var url = UrlFormat({
+  return UrlFormat({
     protocol: 'http',
     host: 'www.voicerss.org/controls/speech.ashx',
     query: {
@@ -17,6 +16,4 @@ module.exports = function voicerss (word) {
       // rnd: Math.random()
     }
   });
-
-  return Promise.resolve(url);
-};
+});
