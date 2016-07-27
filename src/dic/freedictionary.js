@@ -3,46 +3,58 @@ const _async_   = require('co').wrap;
 const fetch     = require('node-fetch');
 const cheerio   = require('cheerio');
 const normalize = require('../lib/normalize');
-const HOST      = 'http://www.collinsdictionary.com';
+const urlformat = require('url').format;
+const HOST      = 'http://www.thefreedictionary.com';
 
 // 1. search word
 const isWordExist = _async_(function * (word) {
-  const url = `${HOST}/autocomplete/?dictCode=english&q=${word}`;
+  let list = [];
+  function jsonpParser (data) {
+    list = data[1].map(v => v[0]);
+  }
+
+  const url = HOST + '/_/search/suggest.ashx' + urlformat({
+    query: {
+      query: word,
+      jsonp: jsonpParser.name
+    }
+  });
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  const list = yield res.json();
-  for (let i = 0; i < list.length; i++) {
-    if (list[i] === word) {
-      return true;
-    }
-  }
-  return false;
+  // execute jsonp
+  eval(yield res.text());
+
+  // word is exist or not
+  return list.indexOf(word) >= 0;
 });
 
 // 2. get audio list
 const getAudioList = _async_(function * (word) {
-  const url = `${HOST}/dictionary/english/${word.replace(/ /g, '-')}`;
+  const url = `${HOST}/${word}`;
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  // parse HTML
   const html = yield res.text();
   const $ = cheerio.load(html);
 
   const set = {};
-  $('a.hwd_sound').each(function (index, element) {
-    const audio = HOST + $(element).attr('data-src-mp3');
-    set[audio] = true;
+  $('.snd2').each((index, element) => {
+    const reg = /^en\/US\//i;
+    const snd = $(element).attr('data-snd');
+    if (reg.test(snd)) {
+      const audio = `http://img2.tfd.com/pron/mp3/${snd}.mp3`;
+      set[audio] = true;
+    }
   });
 
   const list = Object.keys(set);
   if (list.length === 0) {
-    const err = new Error(`'${word}' has no audio from collins`);
+    const err = new Error(`'${word}' has no audio from freedictionary`);
     err.code = 'ENOENT';
     throw err;
   }
@@ -65,7 +77,7 @@ module.exports = _async_(function * (word) {
     return getAudioList(word);
   }
 
-  const err = new Error(`${word} is not found from collins`);
+  const err = new Error(`${word} is not found from freedictionary`);
   err.code = 'ENOENT';
   throw err;
 });
