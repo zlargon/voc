@@ -1,3 +1,4 @@
+'use strict';
 require('babel-polyfill');
 
 const _async_  = require('co').wrap;
@@ -8,7 +9,7 @@ const child    = require('child_process');
 const getAudio = require('./getAudio');
 const pkg      = require('../package.json');
 
-let config   = require('../config.json');
+let config = require('../config.json');
 
 function exec (command) {
   return new Promise((resolve, reject) => {
@@ -23,8 +24,8 @@ function exec (command) {
 }
 
 function list () {
-  for (var key in config) {
-    console.log('%s: "%s"', key, config[key]);
+  for (const key in config) {
+    console.log(`${key}: "${config[key]}"`);
   }
 }
 
@@ -119,7 +120,7 @@ module.exports = _async_(function * (process_argv) {
   if (program.voicerss) service = 'voicerss';
 
   // 5. test audio player command line
-  let cli = config.audio_cli.split(' ')[0];
+  const cli = config.audio_cli.split(' ')[0];
   try {
     yield exec('which ' + cli);
   } catch (e) {
@@ -144,7 +145,7 @@ module.exports = _async_(function * (process_argv) {
 
   // 6. download and play audio
   for (let i = 0; i < program.args.length; i++) {
-    let word = program.args[i].replace(/ /g, '_');
+    let word = program.args[i];
 
     // remove extension '.mp3 or .wav' if any
     let reg = /\.(mp3|wav)$/;

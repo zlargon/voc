@@ -4,7 +4,7 @@ module.exports = function (word) {
     throw new TypeError('word should be a string');
   }
 
-  // replace '_' to ' ', and convert to lower case
-  return word.replace(/_/g, ' ').toLowerCase();
+  // convert to lower case
+  return word.toLowerCase();
 };
 

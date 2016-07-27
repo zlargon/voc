@@ -1,11 +1,12 @@
 'use strict';
 require('babel-polyfill');
 
-const _async_  = require('co').wrap;
-const fs       = require('fs');
-const path     = require('path');
-const download = require('./lib/download');
-const Service  = require('./service');
+const _async_   = require('co').wrap;
+const fs        = require('fs');
+const path      = require('path');
+const download  = require('./lib/download');
+const normalize = require('./lib/normalize');
+const Service   = require('./service');
 
 function getExistAudio (word, directory) {
   const ext = ['.mp3', '.wav'];
@@ -30,10 +31,10 @@ const downloadAudio = _async_(function * (word, directory, serviceName) {
   }
 
   const serv = Service[serviceName];
-  const url = yield serv.getUrl(word);
+  const url = yield serv.getUrl(word.replace(/_/g, ' ')); // replace '_' to ' '
   const ext = serv.ext || path.extname(url);
-  const audioName = word + ext;                         // audio.mp3 or audio.wav
-  const audioDest = path.resolve(directory, audioName); // audio destination
+  const audioName = word.replace(/ /g, '_') + ext;        // audio_xxx.mp3 or audio_xxx.wav
+  const audioDest = path.resolve(directory, audioName);   // audio destination
 
   yield download(url, audioDest);
   console.log(`Download '${audioName}' from ${serviceName} ...`);
@@ -41,25 +42,20 @@ const downloadAudio = _async_(function * (word, directory, serviceName) {
 });
 
 module.exports = _async_(function * (word, directory, service) {
-  if (typeof word !== 'string' || word.length === 0) {
-    throw new TypeError('word should be a string');
-  }
+  word = normalize(word);
 
-  // convert to lower case
-  word = word.toLowerCase();
-
-  // force to download audio from particular service
+  // 1. force to download audio from particular service
   if (service) {
     return yield downloadAudio(word, directory, service);
   }
 
-  // check audio is exist or not
+  // 2-1. check audio is exist or not
   const audio = getExistAudio(word, directory);
   if (audio !== null) {
     return audio;
   }
 
-  // audio is not exist, search audio URL of the word
+  // 2-2. audio is not exist, search audio URL of the word
   for (const serv in Service) {
 
     // download by 'Dictionary' only,
@@ -77,8 +73,8 @@ module.exports = _async_(function * (word, directory, service) {
     }
   }
 
-  // audio is not found
-  const err = new Error(word + ' is not found');
+  // 3. audio is not found
+  const err = new Error(`${word} is not found`);
   err.code = 'ENOENT';
   throw err;
 });
