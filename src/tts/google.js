@@ -1,6 +1,6 @@
 'use strict';
 const _async_   = require('co').wrap;
-const UrlFormat = require('url').format;
+const urlformat = require('url').format;
 const fetch     = require('node-fetch');
 const normalize = require('../lib/normalize');
 const HOST      = 'https://translate.google.com';
@@ -22,7 +22,7 @@ function XL (a, b) {
  * @param   {String} key
  * @return  {String} token
  */
-function token (text, key) {
+function genToken (text, key) {
   var a = text, b = key, d = b.split('.');
   b = Number(d[0]) || 0;
   for (var e = [], f = 0, g = 0; g < a.length; g++) {
@@ -45,7 +45,7 @@ function token (text, key) {
   return a.toString() + '.' + (a ^ b);
 }
 
-const key = _async_(function * () {
+const getKey = _async_(function * () {
   const res = yield fetch(HOST, {
     timeout: 10 * 1000
   });
@@ -68,7 +68,7 @@ const key = _async_(function * () {
 module.exports = _async_(function * (word) {
   word = normalize(word);
 
-  return HOST + '/translate_tts' + UrlFormat({
+  return HOST + '/translate_tts' + urlformat({
     query: {
       ie: 'UTF-8',
       q: word,    // encodeURIComponent
@@ -76,7 +76,7 @@ module.exports = _async_(function * (word) {
       total: 1,
       idx: 0,
       textlen: word.length,
-      tk: token(word, yield key()),
+      tk: genToken(word, yield getKey()),
       client: 't',
       prev: 'input',
       ttsspeed: 1   // slow = 0.24
