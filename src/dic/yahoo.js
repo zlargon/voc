@@ -1,56 +1,74 @@
 'use strict';
 const _async_   = require('co').wrap;
-const util      = require('util');
 const fetch     = require('node-fetch');
 const cheerio   = require('cheerio');
 const normalize = require('../lib/normalize');
+const urlformat = require('url').format;
 
-module.exports = _async_(function * (word) {
-  word = normalize(word);
+// 1. search word
+const isWordExist = _async_(function * (word) {
+  let list = [];
+  function jsonpParser (data) {
+    list = data[1];
+  }
 
-  var url = 'http://tw.dictionary.search.yahoo.com/search?p=' + word + '&fr2=dict';
-  var res = yield fetch(url, {
-    timeout: 10 * 1000
+  const url = 'https://tw.search.yahoo.com/sugg/gossip/gossip-tw-vertical_ss/' + urlformat({
+    query: {
+      pubid: '1306',
+      command: word,
+      callback: jsonpParser.name
+    }
   });
+  const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
-    var msg = util.format('request to %s failed, status code = %d (%s)', url, res.status, res.statusText);
-    throw new Error(msg);
+    throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  var html = yield res.text();
-  var $ = cheerio.load(html);
+  // execute jsonp
+  eval(yield res.text());
 
-  var map = {};
-  var list = [];
-  try {
-    var data = $('#iconStyle.tri').text();
-    JSON.parse(data).sound_url_1.forEach(function (item) {
-      var audio = item.mp3;
-      if (typeof audio !== 'string' || map.hasOwnProperty(audio) === true) {
-        return;
-      }
+  // word is exist or not
+  return list.indexOf(word) >= 0;
+});
 
-      map[audio] = true;
-      list.push(audio);
-    });
-  } catch (e) {
-    // JSON parse failed
+// 2. get audio list
+const getAudioList = _async_(function * (word) {
+  const url = `http://tw.dictionary.search.yahoo.com/search?p=${word}&fr2=dict`;
+  const res = yield fetch(url, { timeout: 10 * 1000 });
+  if (res.status !== 200) {
+    throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  if (list.length === 0) {
-    var err = new Error(word + ' is not found from yahoo');
-    err.code = 'ENOENT';
-    throw err;
-  }
+  const html = yield res.text();
+  const $ = cheerio.load(html);
+
+  const set = {};
+  JSON.parse($('#iconStyle.tri').text()).sound_url_1.forEach(item => {
+    if ('mp3' in item) {
+      set[item.mp3] = true;
+    }
+  });
 
   // show all the audio url
+  const list = Object.keys(set);
   if (list.length > 1) {
-    list.forEach(function (audio, i) {
-      i++;
-      console.log(i + '. ' + audio);
+    list.forEach((audio, i) => {
+      console.log(`${i + 1}. ${audio}`);
     });
   }
 
   // return the first audio from list
   return list[0];
+});
+
+module.exports = _async_(function * (word) {
+  word = normalize(word);
+
+  if (yield isWordExist(word)) {
+    return getAudioList(word);
+  }
+
+  const err = new Error(`${word} is not found from yahoo`);
+  err.code = 'ENOENT';
+  throw err;
 });
