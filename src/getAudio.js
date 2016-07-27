@@ -1,18 +1,16 @@
+'use strict';
 require('babel-polyfill');
 
 const _async_  = require('co').wrap;
 const fs       = require('fs');
-const util     = require('util');
-const urlParse = require('url').parse;
-const http     = require('http');
-const https    = require('https');
 const path     = require('path');
+const download = require('./lib/download');
 const Service  = require('./service');
 
 function getExistAudio (word, directory) {
-  var ext = ['.mp3', '.wav'];
-  for (var i = 0; i < ext.length; i++) {
-    var audio = path.resolve(directory, word + ext[i]);
+  const ext = ['.mp3', '.wav'];
+  for (let i = 0; i < ext.length; i++) {
+    const audio = path.resolve(directory, word + ext[i]);
 
     try {
       fs.statSync(audio);
@@ -26,59 +24,21 @@ function getExistAudio (word, directory) {
   return null;
 }
 
-var downloadAudio = _async_(function * (word, directory, serviceName) {
-  var serv = Service[serviceName];
-  if (!serv) throw new Error(util.format("Unknown Service '%s'", serviceName));
+const downloadAudio = _async_(function * (word, directory, serviceName) {
+  if (serviceName in Service === false) {
+    throw new Error(`Unknown Service '${serviceName}'`);
+  }
 
-  var url = yield serv.getUrl(word);
-  var ext = serv.ext || path.extname(url);
-  var audioName = word + ext;                         // audio.mp3 or audio.wav
-  var audioDest = path.resolve(directory, audioName); // audio destination
+  const serv = Service[serviceName];
+  const url = yield serv.getUrl(word);
+  const ext = serv.ext || path.extname(url);
+  const audioName = word + ext;                         // audio.mp3 or audio.wav
+  const audioDest = path.resolve(directory, audioName); // audio destination
 
-  yield downloadFile(url, audioDest);
-  console.log("Download '%s' from %s ...", audioName, serviceName);
+  yield download(url, audioDest);
+  console.log(`Download '${audioName}' from ${serviceName} ...`);
   return audioDest;
 });
-
-function downloadFile (url, dest) {
-  return new Promise(function (resolve, reject) {
-    var info = urlParse(url);
-    var httpClient = info.protocol === 'https:' ? https : http;
-    var options = {
-      host: info.host,
-      path: info.path,
-      headers: {
-        'user-agent': 'voc'
-      }
-    };
-
-    httpClient.get(options, function(res) {
-      // check status code
-      if (res.statusCode !== 200) {
-        var msg = util.format('request to %s failed, status code = %d (%s)', url, res.statusCode, res.statusMessage);
-        reject(new Error(msg));
-        return;
-      }
-
-      var file = fs.createWriteStream(dest);
-      file.on('finish', function() {
-        // close() is async, call resolve after close completes.
-        file.close(resolve);
-      });
-      file.on('error', function (err) {
-        // Delete the file async. (But we don't check the result)
-        fs.unlink(dest);
-        reject(err);
-      });
-
-      res.pipe(file);
-    })
-    .on('error', function(err) {
-      reject(err);
-    })
-    .end();
-  });
-}
 
 module.exports = _async_(function * (word, directory, service) {
   if (typeof word !== 'string' || word.length === 0) {
@@ -94,13 +54,13 @@ module.exports = _async_(function * (word, directory, service) {
   }
 
   // check audio is exist or not
-  var audio = getExistAudio(word, directory);
+  const audio = getExistAudio(word, directory);
   if (audio !== null) {
     return audio;
   }
 
   // audio is not exist, search audio URL of the word
-  for (var serv in Service) {
+  for (const serv in Service) {
 
     // download by 'Dictionary' only,
     // because it can always download audio from 'TTS' successfully even the words are misspell
@@ -118,7 +78,7 @@ module.exports = _async_(function * (word, directory, service) {
   }
 
   // audio is not found
-  var err = new Error(word + ' is not found');
+  const err = new Error(word + ' is not found');
   err.code = 'ENOENT';
   throw err;
 });
