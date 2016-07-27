@@ -93,10 +93,10 @@ module.exports = _async_(function * (process_argv) {
     .option('-g, --google',      "force download audio from google")
     .option('-i, --ispeech',     "force download audio from ispeech")
     .option('-v, --voicerss',    "force download audio from voicerss")
-    .option('-a, --audio <cli>', "the command line to play .mp3 audio. set defaults to 'afplay'", setAudioCli)
-    .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'",    setAudioDirectory)
-    .option('-l, --list',        "list all the configuration",                                    list)
-    .option('-r, --reset',       "reset configuration to default",                                reset)
+    .option('-a, --audio <cli>', "the command line to play .mp3 audio.", setAudioCli)
+    .option('-d, --dir <path>',  "set the download directory. set defaults to '~/vocabulary'", setAudioDirectory)
+    .option('-l, --list',        "list all the configuration", list)
+    .option('-r, --reset',       "reset configuration to default", reset)
     .parse(process_argv);
 
   // show help info if input is empty

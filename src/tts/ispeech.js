@@ -1,12 +1,11 @@
 'use strict';
-const _async_   = require('co').wrap;
 const urlformat = require('url').format;
 const normalize = require('../lib/normalize');
 
-module.exports = _async_(function * (word) {
+module.exports = (word) => new Promise(resolve => {
   word = normalize(word);
 
-  return urlformat({
+  const url = urlformat({
     protocol: 'http',
     host: 'api.ispeech.org/api/rest',
     query: {
@@ -18,4 +17,6 @@ module.exports = _async_(function * (word) {
       text: word
     }
   });
+
+  resolve(url);
 });
