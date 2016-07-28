@@ -51,6 +51,7 @@ const searchUrlSet = _async_(function * (word) {
       set[link] = true;
     }
   });
+
   return set;
 });
 
@@ -79,14 +80,21 @@ const getAudioSet = _async_(function * (wordUrl) {
 module.exports = _async_(function * (word) {
   word = normalize(word);
 
+  const urlSet = yield searchUrlSet(word);
+  if (Object.keys(urlSet).length === 0) {
+    const err = new Error(`'${word}' is not found from webster`);
+    err.code = 'ENOENT';
+    throw err;
+  }
+
   const set = {};
-  for (const url in yield searchUrlSet(word)) {
+  for (const url in urlSet) {
     Object.assign(set, yield getAudioSet(url));
   }
 
   const list = Object.keys(set);
   if (list.length === 0) {
-    const err = new Error(`${word} is not found from webster`);
+    const err = new Error(`'${word}' has no audio from webster`);
     err.code = 'ENOENT';
     throw err;
   }
