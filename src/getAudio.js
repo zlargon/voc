@@ -67,6 +67,8 @@ module.exports = _async_(function * (word, directory, service) {
     try {
       return yield downloadAudio(word, directory, serv);
     } catch (e) {
+
+      // unusual error
       if (e.code !== 'ENOENT') {
         throw e;
       }
@@ -74,7 +76,7 @@ module.exports = _async_(function * (word, directory, service) {
   }
 
   // 3. audio is not found
-  const err = new Error(`${word} is not found`);
+  const err = new Error(`'${word}' is not found`);
   err.code = 'ENOENT';
   throw err;
 });

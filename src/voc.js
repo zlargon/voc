@@ -149,27 +149,29 @@ module.exports = _async_(function * (process_argv) {
   for (let i = 0; i < program.args.length; i++) {
     let word = program.args[i];
 
-    // remove extension '.mp3 or .wav' if any
+    // 6-1. remove extension '.mp3 or .wav' if any
     let reg = /\.(mp3|wav)$/;
     if (word.length > 4 && reg.test(word) === true) {
       word = word.slice(0, -4);
     }
 
-    let audio = null;
     try {
-      audio = yield getAudio(word, config.directory, service);
+      // 6-2. download audio
+      const audio = yield getAudio(word, config.directory, service);
+
+      // 6-3. play audio
+      console.log(`play '${path.basename(audio)}' ...`);
+      yield exec(`${config.audio_cli} "${audio}"`);
+
     } catch (e) {
+
+      // unusual error
       if (e.code !== 'ENOENT') {
         throw e;
       }
-    }
 
-    if (audio === null) {
-      console.log(`'${word}' is not found${service ? ' from ' + service : ''}`);
-      continue;
+      // it is not found or no audio
+      console.log(e.message);
     }
-
-    console.log(`play '${path.basename(audio)}' ...`);
-    yield exec(`${config.audio_cli} "${audio}"`);
   }
 });

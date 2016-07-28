@@ -77,7 +77,7 @@ module.exports = _async_(function * (word) {
     return getAudioList(word);
   }
 
-  const err = new Error(`${word} is not found from freedictionary`);
+  const err = new Error(`'${word}' is not found from freedictionary`);
   err.code = 'ENOENT';
   throw err;
 });

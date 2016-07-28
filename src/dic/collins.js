@@ -65,7 +65,7 @@ module.exports = _async_(function * (word) {
     return getAudioList(word);
   }
 
-  const err = new Error(`${word} is not found from collins`);
+  const err = new Error(`'${word}' is not found from collins`);
   err.code = 'ENOENT';
   throw err;
 });
