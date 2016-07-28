@@ -1,3 +1,8 @@
+## 1.8.1 (July 28, 2016)
+
+- handle error case without audio in Webster and Yahoo ([#6](https://github.com/zlargon/voc/issues/6))
+- it doesn't play sentence audio when the same audio has been downloaded ([#7](https://github.com/zlargon/voc/issues/7))
+
 ## 1.8.0 (July 28, 2016)
 
 - support [The Free Dictionary](http://www.thefreedictionary.com/) with option `-f, --freedic`.
