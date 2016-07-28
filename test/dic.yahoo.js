@@ -44,6 +44,11 @@ describe('dic.yahoo', function() {
     return expect(yahoo(word)).to.eventually.be.rejected;
   });
 
+  it('philanthropicminde', function () {
+    var word = 'philanthropicminde';
+    return expect(yahoo(word)).to.eventually.be.rejected;
+  });
+
   it('(null)', function () {
     var word = null;
     return expect(yahoo(word)).to.eventually.be.rejectedWith(TypeError);

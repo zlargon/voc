@@ -49,8 +49,14 @@ const getAudioList = _async_(function * (word) {
     }
   });
 
-  // show all the audio url
   const list = Object.keys(set);
+  if (list.length === 0) {
+    const err = new Error(`'${word}' has no audio from yahoo`);
+    err.code = 'ENOENT';
+    throw err;
+  }
+
+  // show all the audio url
   if (list.length > 1) {
     list.forEach((audio, i) => {
       console.log(`${i + 1}. ${audio}`);
@@ -68,7 +74,7 @@ module.exports = _async_(function * (word) {
     return getAudioList(word);
   }
 
-  const err = new Error(`${word} is not found from yahoo`);
+  const err = new Error(`'${word}' is not found from yahoo`);
   err.code = 'ENOENT';
   throw err;
 });
