@@ -73,6 +73,14 @@ describe('Get Audio', function() {
     );
   });
 
+  it('hello world (Audio is already exist, so it should return immediately)', function () {
+    this.timeout(100);
+    var word = 'hello world';
+    return expect(getAudio(word, __dirname)).to.eventually.equal(
+      path.resolve(__dirname, 'hello_world.mp3')
+    );
+  });
+
   it('great (from ispeech)', function () {
     var word = 'great';
     return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(

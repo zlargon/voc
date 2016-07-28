@@ -8,11 +8,15 @@ const download  = require('./lib/download');
 const normalize = require('./lib/normalize');
 const Service   = require('./service');
 
+function getAudioFileName(word, ext) {
+  // only convert ' ' to '_' here
+  return word.replace(/ /g, '_') + ext;
+}
+
 function getExistAudio (word, directory) {
   const ext = ['.mp3', '.wav'];
   for (let i = 0; i < ext.length; i++) {
-    const audio = path.resolve(directory, word + ext[i]);
-
+    const audio = path.resolve(directory, getAudioFileName(word, ext[i]));
     try {
       fs.statSync(audio);
       return audio;
@@ -31,10 +35,10 @@ const downloadAudio = _async_(function * (word, directory, serviceName) {
   }
 
   const serv = Service[serviceName];
-  const url = yield serv.getUrl(word.replace(/_/g, ' ')); // replace '_' to ' '
+  const url = yield serv.getUrl(word);
   const ext = serv.ext || path.extname(url);
-  const audioName = word.replace(/ /g, '_') + ext;        // audio_xxx.mp3 or audio_xxx.wav
-  const audioDest = path.resolve(directory, audioName);   // audio destination
+  const audioName = getAudioFileName(word, ext);        // audio_xxx.mp3 or audio_xxx.wav
+  const audioDest = path.resolve(directory, audioName); // audio destination
 
   yield download(url, audioDest);
   console.log(`Download '${audioName}' from ${serviceName} ...`);
@@ -42,7 +46,9 @@ const downloadAudio = _async_(function * (word, directory, serviceName) {
 });
 
 module.exports = _async_(function * (word, directory, service) {
-  word = normalize(word);
+
+  // only convert '_' to ' ' here
+  word = normalize(word).replace(/_/g, ' ');
 
   // 1. force to download audio from particular service
   if (service) {
