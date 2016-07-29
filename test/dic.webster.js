@@ -39,14 +39,10 @@ describe('dic.webster', function() {
     return checkHttpStatus(word);
   });
 
-  it('sherry (link resolve)', function () {
-    var word = 'sherry';
-    return checkHttpStatus(word);
-  });
-
-  it('homicide (link resolve)', function () {
-    var word = 'homicide';
-    return checkHttpStatus(word);
+  it('artesian well', function () {
+    var word = 'artesian well';
+    var url = 'http://media.merriam-webster.com/audio/prons/en/us/mp3/a/artesi01.mp3';
+    return expect(webster(word)).to.eventually.equal(url);
   });
 
   it('projectable (not from title)', function () {
