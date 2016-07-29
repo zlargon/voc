@@ -55,8 +55,8 @@ Options:
   -V, --version      output the version number
   -w, --webster      force download audio from webster
   -y, --yahoo        force download audio from yahoo
-  -c, --collins      force download audio from collins
   -f, --freedic      force download audio from freedictionary
+  -c, --collins      force download audio from collins
   -g, --google       force download audio from google
   -i, --ispeech      force download audio from ispeech
   -v, --voicerss     force download audio from voicerss

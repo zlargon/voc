@@ -1,3 +1,11 @@
+## 1.8.2 (July 30, 2016)
+
+- change the download priority (webster > yahoo > freedic > collins)
+- improve to download correct audios more efficiently
+
+### Yahoo
+- show tip when user likely have a spelling mistakes
+
 ## 1.8.1 (July 28, 2016)
 
 - handle error case without audio in Webster and Yahoo ([#6](https://github.com/zlargon/voc/issues/6))
@@ -11,7 +19,6 @@
 - fully migrate to ES2015, and remove Stage-0 syntax `async/await`.
 
 ### Yahoo
-
 - search and check the words before download the audio
 
 ## 1.7.1 (June 10, 2016)
