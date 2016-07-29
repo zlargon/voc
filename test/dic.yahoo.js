@@ -39,6 +39,11 @@ describe('dic.yahoo', function() {
     return checkHttpStatus(word);
   });
 
+  it('ambulocetus', function () {
+    var word = 'ambulocetus';
+    return checkHttpStatus(word);
+  });
+
   it('askdjalksjdl', function () {
     var word = 'askdjalksjdl';
     return expect(yahoo(word)).to.eventually.be.rejected;
