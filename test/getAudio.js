@@ -59,6 +59,11 @@ describe('Get Audio', function() {
     return expect(getAudio(word, __dirname, 'collins')).to.be.rejectedWith(Error);
   });
 
+  it('basilosaurus (download failure)', function () {
+    var word = 'basilosaurus';
+    return expect(getAudio(word, __dirname, 'yahoo')).to.be.rejectedWith(Error);
+  });
+
   it('testing (from google)', function () {
     var word = 'testing';
     return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
