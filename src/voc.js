@@ -88,8 +88,8 @@ module.exports = _async_(function * (process_argv) {
     .version(pkg.version)
     .option('-w, --webster',     "force download audio from webster")
     .option('-y, --yahoo',       "force download audio from yahoo")
-    .option('-c, --collins',     "force download audio from collins")
     .option('-f, --freedic',     "force download audio from freedictionary")
+    .option('-c, --collins',     "force download audio from collins")
     .option('-g, --google',      "force download audio from google")
     .option('-i, --ispeech',     "force download audio from ispeech")
     .option('-v, --voicerss',    "force download audio from voicerss")
@@ -113,9 +113,9 @@ module.exports = _async_(function * (process_argv) {
 
   // 4. choice the service
   let service = null;
-  if (program.yahoo)    service = 'yahoo';
   if (program.collins)  service = 'collins';
   if (program.freedic)  service = 'freedic';
+  if (program.yahoo)    service = 'yahoo';
   if (program.webster)  service = 'webster';
   if (program.google)   service = 'google';
   if (program.ispeech)  service = 'ispeech';

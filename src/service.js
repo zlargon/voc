@@ -5,6 +5,11 @@ module.exports = {
     getUrl: require('./dic/webster')
   },
 
+  yahoo: {
+    type: 'dic',
+    getUrl: require('./dic/yahoo')
+  },
+
   freedic: {
     type: 'dic',
     getUrl: require('./dic/freedictionary')
@@ -13,11 +18,6 @@ module.exports = {
   collins: {
     type: 'dic',
     getUrl: require('./dic/collins')
-  },
-
-  yahoo: {
-    type: 'dic',
-    getUrl: require('./dic/yahoo')
   },
 
   google: {
