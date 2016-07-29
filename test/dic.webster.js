@@ -49,6 +49,12 @@ describe('dic.webster', function() {
     return checkHttpStatus(word);
   });
 
+  it('projectable (not from title)', function () {
+    var word = 'projectable';
+    var url = 'http://media.merriam-webster.com/audio/prons/en/us/mp3/p/projec03.mp3';
+    return expect(webster(word)).to.eventually.equal(url);
+  });
+
   it('askdjalksjdl', function () {
     var word = 'askdjalksjdl';
     return expect(webster(word)).to.eventually.be.rejected;

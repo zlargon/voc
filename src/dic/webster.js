@@ -52,7 +52,7 @@ const searchUrlSet = _async_(function * (word) {
   const set = {};
   const list = yield res.json();
   list.forEach(item => {
-    if (item.category === "Dictionary" && item.label.toLowerCase() === word) {
+    if (item.category === 'Dictionary' && item.label.toLowerCase() === word) {
       const link = urlresolve(HOST, item.link);
       set[link] = true;
     }
@@ -62,7 +62,7 @@ const searchUrlSet = _async_(function * (word) {
 });
 
 // 2. get audio set
-const getAudioSet = _async_(function * (wordUrl) {
+const getAudioSet = _async_(function * (originWord, wordUrl) {
   const res = yield fetch(wordUrl, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     throw new Error(`request to ${wordUrl} failed, status code = ${res.status} (${res.statusText})`);
@@ -71,13 +71,16 @@ const getAudioSet = _async_(function * (wordUrl) {
   const set = {};
   const html = yield res.text();
   const $ = cheerio.load(html);
-  $('.word-and-pronunciation .play-pron').each((index, element) => {
+  $('.play-pron').each((index, element) => {
     const ele = $(element);
+    const word = ele.prev().text().toLowerCase();
     const lang = ele.attr('data-lang').replace(/_/g, '/');
     const dir  = ele.attr('data-dir');
     const file = ele.attr('data-file');
     const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`;
-    set[audio] = true;
+    if (word === originWord) {
+      set[audio] = true;
+    }
   });
 
   return set;
@@ -95,7 +98,7 @@ module.exports = _async_(function * (word) {
 
   const set = {};
   for (const url in urlSet) {
-    Object.assign(set, yield getAudioSet(url));
+    Object.assign(set, yield getAudioSet(word, url));
   }
 
   const list = Object.keys(set);
