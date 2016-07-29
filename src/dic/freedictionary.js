@@ -8,15 +8,9 @@ const HOST      = 'http://www.thefreedictionary.com';
 
 // 1. search word
 const isWordExist = _async_(function * (word) {
-  let list = [];
-  function jsonpParser (data) {
-    list = data[1].map(v => v[0]);
-  }
-
   const url = HOST + '/_/search/suggest.ashx' + urlformat({
     query: {
-      query: word,
-      jsonp: jsonpParser.name
+      query: word
     }
   });
   const res = yield fetch(url, { timeout: 10 * 1000 });
@@ -24,8 +18,8 @@ const isWordExist = _async_(function * (word) {
     throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  // execute jsonp
-  eval(yield res.text());
+  const data = yield res.json();
+  const list = data[1].map(v => v.toLowerCase());
 
   // word is exist or not
   return list.indexOf(word) >= 0;
