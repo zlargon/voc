@@ -3,23 +3,26 @@ const _async_   = require('co').wrap;
 const fetch     = require('node-fetch');
 const cheerio   = require('cheerio');
 const normalize = require('../lib/normalize');
+const urlformat = require('url').format;
 const HOST      = 'http://www.collinsdictionary.com';
 
 // 1. search word
 const isWordExist = _async_(function * (word) {
-  const url = `${HOST}/autocomplete/?dictCode=english&q=${word}`;
+  const url = HOST + '/autocomplete/' + urlformat({
+    query: {
+      dictCode: 'english',
+      q: word
+    }
+  });
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
   }
 
-  const list = yield res.json();
-  for (let i = 0; i < list.length; i++) {
-    if (list[i] === word) {
-      return true;
-    }
-  }
-  return false;
+  const list = (yield res.json()).map(v => v.toLowerCase());
+
+  // word is exist or not
+  return list.indexOf(word) >= 0;
 });
 
 // 2. get audio list

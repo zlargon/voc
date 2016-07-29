@@ -1,14 +1,20 @@
 'use strict';
-const _async_   = require('co').wrap;
-const fetch     = require('node-fetch');
-const cheerio   = require('cheerio');
-const resolve   = require('url').resolve;
-const normalize = require('../lib/normalize');
-const HOST      = 'http://www.merriam-webster.com';
+const _async_    = require('co').wrap;
+const fetch      = require('node-fetch');
+const cheerio    = require('cheerio');
+const urlformat  = require('url').format;
+const urlresolve = require('url').resolve;
+const normalize  = require('../lib/normalize');
+const HOST       = 'http://www.merriam-webster.com';
 
 // 1. search url set
 const searchUrlSet = _async_(function * (word) {
-  const url = `${HOST}/autocomplete?term=${word}&ref=dictionary`;
+  const url = HOST + '/autocomplete' + urlformat({
+    query: {
+      ref: 'dictionary',
+      term: word
+    }
+  });
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
@@ -47,7 +53,7 @@ const searchUrlSet = _async_(function * (word) {
   const list = yield res.json();
   list.forEach(item => {
     if (item.category === "Dictionary" && item.label.toLowerCase() === word) {
-      const link = resolve(HOST, item.link);
+      const link = urlresolve(HOST, item.link);
       set[link] = true;
     }
   });
