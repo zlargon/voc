@@ -10,7 +10,9 @@ module.exports = _async_(function * (word) {
   const url = 'http://www.merriam-webster.com/dictionary/' + word;
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
-    throw new Error(`request to ${url} failed, status code = ${res.status} (${res.statusText})`);
+    const err = new Error(`'${word}' is not found from webster`);
+    err.code = 'ENOENT';
+    throw err;
   }
 
   const set = {};
@@ -30,7 +32,7 @@ module.exports = _async_(function * (word) {
 
   const list = Object.keys(set);
   if (list.length === 0) {
-    const err = new Error(`'${word}' is not found from webster`);
+    const err = new Error(`'${word}' has no audio from webster`);
     err.code = 'ENOENT';
     throw err;
   }
