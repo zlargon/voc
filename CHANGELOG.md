@@ -1,3 +1,7 @@
+## 1.8.3 (July 30, 2016)
+
+- fix issue throwing wrong exception when word is not found ([#8](https://github.com/zlargon/voc/issues/8))
+
 ## 1.8.2 (July 30, 2016)
 
 - change the download priority (webster > yahoo > freedic > collins)
