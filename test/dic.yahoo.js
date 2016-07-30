@@ -44,6 +44,11 @@ describe('dic.yahoo', function() {
     return checkHttpStatus(word);
   });
 
+  it('ambulocetu (show misspelling tip)', function () {
+    var word = 'ambulocetu';
+    return expect(yahoo(word)).to.eventually.be.rejected;
+  });
+
   it('askdjalksjdl', function () {
     var word = 'askdjalksjdl';
     return expect(yahoo(word)).to.eventually.be.rejected;
