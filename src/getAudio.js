@@ -15,18 +15,23 @@ function getAudioFileName(word, ext) {
 
 function getExistAudio (word, directory) {
   const ext = ['.mp3', '.wav'];
+  const speech = ['', '.n', '.v', '.adj', '.adv'];
+
+  const list = [];
   for (let i = 0; i < ext.length; i++) {
-    const audio = path.resolve(directory, getAudioFileName(word, ext[i]));
-    try {
-      fs.statSync(audio);
-      return audio;
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        throw e;
+    for (let j = 0; j < speech.length; j++) {
+      const audio = path.resolve(directory, getAudioFileName(word + speech[j], ext[i]));
+      try {
+        fs.statSync(audio);
+        list.push(audio);
+      } catch (e) {
+        if (e.code !== 'ENOENT') {
+          throw e;
+        }
       }
     }
   }
-  return null;
+  return list;
 }
 
 const downloadAudio = _async_(function * (word, directory, serviceName) {
@@ -52,12 +57,12 @@ module.exports = _async_(function * (word, directory, service) {
 
   // 1. force to download audio from particular service
   if (service) {
-    return yield downloadAudio(word, directory, service);
+    return [yield downloadAudio(word, directory, service)];
   }
 
   // 2-1. check audio is exist or not
   const audio = getExistAudio(word, directory);
-  if (audio !== null) {
+  if (audio.length !== 0) {
     return audio;
   }
 
@@ -71,7 +76,7 @@ module.exports = _async_(function * (word, directory, service) {
     }
 
     try {
-      return yield downloadAudio(word, directory, serv);
+      return [yield downloadAudio(word, directory, serv)];
     } catch (e) {
 
       // unusual error

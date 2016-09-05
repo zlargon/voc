@@ -155,13 +155,15 @@ module.exports = _async_(function * (process_argv) {
       word = word.slice(0, -4);
     }
 
+    // 6-2. get audio list and play them
     try {
-      // 6-2. download audio
-      const audio = yield getAudio(word, config.directory, service);
+      const audioList = yield getAudio(word, config.directory, service);
 
-      // 6-3. play audio
-      console.log(`play '${path.basename(audio)}' ...`);
-      yield exec(`${config.audio_cli} "${audio}"`);
+      for (let j = 0; j < audioList.length; j++) {
+        const audio = audioList[j];
+        console.log(`play '${path.basename(audio)}' ...`);
+        yield exec(`${config.audio_cli} "${audio}"`);
+      }
 
     } catch (e) {
 

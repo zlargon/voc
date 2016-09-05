@@ -15,6 +15,19 @@ getAudio.__set__({
   }
 });
 
+function checkAudioAndFile (fileName, word, service) {
+  return expect(
+    getFirstAudio(word, service)
+  ).to.eventually.equal(
+    path.resolve(__dirname, fileName)
+  );
+}
+
+function getFirstAudio (word, service) {
+  return getAudio(word, __dirname, service)
+    .then(function (audio) { return audio[0] });
+}
+
 function removeAudio () {
   fs.readdirSync(__dirname).forEach(function (file) {
     if (/.mp3$/.test(file)) {
@@ -29,115 +42,95 @@ describe('Get Audio', function() {
 
   it('test', function () {
     var word = 'test';
-    return expect(getAudio(word, __dirname)).to.eventually.equal(
-      path.resolve(__dirname, 'test.mp3')
-    );
+    return checkAudioAndFile('test.mp3', word);
   });
 
   it('Hello', function () {
     var word = 'Hello';
-    return expect(getAudio(word, __dirname)).to.eventually.equal(
-      path.resolve(__dirname, 'hello.mp3')
-    );
+    return checkAudioAndFile('hello.mp3', word);
   });
 
   it('hello (Audio is already exist, so it should return immediately)', function () {
     this.timeout(100);
     var word = 'hello';
-    return expect(getAudio(word, __dirname)).to.eventually.equal(
-      path.resolve(__dirname, 'hello.mp3')
-    );
+    return checkAudioAndFile('hello.mp3', word);
   });
 
   it('testing (from webster)', function () {
     var word = 'testing';
-    return expect(getAudio(word, __dirname, 'webster')).to.eventually.be.rejected;
+    return expect(getFirstAudio(word, 'webster')).to.eventually.be.rejected;
   });
 
   it('test-drive', function () {
     var word = 'test-drive';
-    return expect(getAudio(word, __dirname, 'collins')).to.be.rejectedWith(Error);
+    return expect(getFirstAudio(word, 'collins')).to.be.rejectedWith(Error);
   });
 
   it('basilosaurus (download failure)', function () {
     var word = 'basilosaurus';
-    return expect(getAudio(word, __dirname, 'yahoo')).to.be.rejectedWith(Error);
+    return expect(getFirstAudio(word, 'yahoo')).to.be.rejectedWith(Error);
   });
 
   it('testing (from google)', function () {
     var word = 'testing';
-    return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
-      path.resolve(__dirname, 'testing.mp3')
-    );
+    return checkAudioAndFile('testing.mp3', word, 'google');
   });
 
   it('Hello_World (from google)', function () {
     var word = 'Hello_World';
-    return expect(getAudio(word, __dirname, 'google')).to.eventually.equal(
-      path.resolve(__dirname, 'hello_world.mp3')
-    );
+    return checkAudioAndFile('hello_world.mp3', word, 'google');
   });
 
   it('hello world (Audio is already exist, so it should return immediately)', function () {
     this.timeout(100);
     var word = 'hello world';
-    return expect(getAudio(word, __dirname)).to.eventually.equal(
-      path.resolve(__dirname, 'hello_world.mp3')
-    );
+    return checkAudioAndFile('hello_world.mp3', word);
   });
 
   it('great (from ispeech)', function () {
     var word = 'great';
-    return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
-      path.resolve(__dirname, 'great.mp3')
-    );
+    return checkAudioAndFile('great.mp3', word, 'ispeech');
   });
 
   it('Have_A_Nice_Day (from ispeech)', function () {
     var word = 'Have_A_Nice_Day';
-    return expect(getAudio(word, __dirname, 'ispeech')).to.eventually.equal(
-      path.resolve(__dirname, 'have_a_nice_day.mp3')
-    );
+    return checkAudioAndFile('have_a_nice_day.mp3', word, 'ispeech');
   });
 
   it('perfect (from voicerss)', function () {
     var word = 'perfect';
-    return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
-      path.resolve(__dirname, 'perfect.mp3')
-    );
+    return checkAudioAndFile('perfect.mp3', word, 'voicerss');
   });
 
   it('today_is_sunday (from voicerss)', function () {
     var word = 'today_is_sunday';
-    return expect(getAudio(word, __dirname, 'voicerss')).to.eventually.equal(
-      path.resolve(__dirname, 'today_is_sunday.mp3')
-    );
+    return checkAudioAndFile('today_is_sunday.mp3', word, 'voicerss');
   });
 
   it('askdjalksjdl', function () {
     var word = 'askdjalksjdl';
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
+    return expect(getFirstAudio(word)).to.eventually.be.rejected;
   });
 
   it('(null)', function () {
     this.timeout(100);
     var word = null;
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
+    return expect(getFirstAudio(word)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (number)', function () {
     this.timeout(100);
     var word = 123;
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
+    return expect(getFirstAudio(word)).to.eventually.be.rejectedWith(TypeError);
   });
 
   it('123 (string)', function () {
     var word = '123';
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejected;
+    return expect(getFirstAudio(word)).to.eventually.be.rejected;
   });
 
   it('(Empty String)', function () {
     var word = '';
-    return expect(getAudio(word, __dirname)).to.eventually.be.rejectedWith(TypeError);
+    return expect(getFirstAudio(word)).to.eventually.be.rejectedWith(TypeError);
   });
 });
