@@ -10,28 +10,17 @@ const Service   = require('./service');
 
 function getAudioFileName(word, ext) {
   // only convert ' ' to '_' here
-  return word.replace(/ /g, '_') + ext;
+  return word.replace(/ /g, '_') + (ext ? ext : '');
 }
 
 function getExistAudio (word, directory) {
-  const ext = ['.mp3', '.wav'];
-  const speech = ['', '.n', '.v', '.adj', '.adv'];
+  // word.mp3, word.xxx.mp3, word.xxx.wav
+  word = getAudioFileName(word);
+  const regx = new RegExp(`^${word}(\\..+)?\\.(mp3|wav)$`);
 
-  const list = [];
-  for (let i = 0; i < ext.length; i++) {
-    for (let j = 0; j < speech.length; j++) {
-      const audio = path.resolve(directory, getAudioFileName(word + speech[j], ext[i]));
-      try {
-        fs.statSync(audio);
-        list.push(audio);
-      } catch (e) {
-        if (e.code !== 'ENOENT') {
-          throw e;
-        }
-      }
-    }
-  }
-  return list;
+  return fs.readdirSync(directory, 'utf8')
+           .filter(v => regx.test(v))
+           .map(audio => path.resolve(directory, audio));
 }
 
 const downloadAudio = _async_(function * (word, directory, serviceName) {
