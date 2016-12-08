@@ -1,3 +1,23 @@
+## 1.8.4 (Dec 8, 2016)
+
+- add the rule for playing hole vocabulary speech group.
+
+	If the vocabulary has different voice in different speech, such as 'mediate'.
+
+    First, download all the audio of 'mediate'.
+
+    Second, rename them to the format 'mediate.xxx.mp3' manually, such as 'mediate.v.mp3' and 'mediate.adj.mp3'.
+
+    Next time when you execute command 'voc mediate', program will play hole speech group in order.
+
+    For example:
+
+```bash
+$ voc mediate
+play 'mediate.v.mp3' ...
+play 'mediate.adj.mp3' ...
+```
+
 ## 1.8.3 (July 30, 2016)
 
 - fix issue throwing wrong exception when word is not found ([#8](https://github.com/zlargon/voc/issues/8))
