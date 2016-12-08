@@ -121,41 +121,17 @@ module.exports = _async_(function * (process_argv) {
   if (program.ispeech)  service = 'ispeech';
   if (program.voicerss) service = 'voicerss';
 
-  // 5. test audio player command line
-  const cli = config.audio_cli.split(' ')[0];
-  try {
-    yield exec('which ' + cli);
-  } catch (e) {
-    console.log(`\naudio player command line "${cli}" is not found.\n`);
-
-    switch (cli) {
-      case 'dlc':
-        console.log('Download DLC player');
-        console.log('http://dlcplayer.jimdo.com/');
-        break;
-
-      case 'mpg123':
-        console.log('Download mpg123 player');
-        console.log('http://www.mpg123.de');
-        console.log('$ sudo apt-get install mpg123');
-        break;
-    }
-
-    console.log('');
-    return;
-  }
-
-  // 6. download and play audio
+  // 5. download and play audio
   for (let i = 0; i < program.args.length; i++) {
     let word = program.args[i];
 
-    // 6-1. remove extension '.mp3 or .wav' if any
+    // 5-1. remove extension '.mp3 or .wav' if any
     let reg = /\.(mp3|wav)$/;
     if (word.length > 4 && reg.test(word) === true) {
       word = word.slice(0, -4);
     }
 
-    // 6-2. get audio list and play them
+    // 5-2. get audio list and play them
     try {
       const audioList = yield getAudio(word, config.directory, service);
 
