@@ -85,9 +85,15 @@ $ voc "Hello World" -i   # download hello_world.mp3 from ispeech service
 
   http://www.mpg123.de/
 
+```bash
+$ sudo apt-get install mpg123
+```
+
 * __Windows :__ `dlc`
 
   http://dlcplayer.jimdo.com/
+
+  - original download link has died, but you still can download from [here](https://github.com/zlargon/voc/raw/master/dlcplayer.zip).
 
 ## Configuration
 
