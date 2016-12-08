@@ -66,9 +66,9 @@ describe('Get Audio', function() {
     return expect(getFirstAudio(word, 'collins')).to.be.rejectedWith(Error);
   });
 
-  it('basilosaurus (download failure)', function () {
+  it('basilosaurus (from yahoo)', function () {
     var word = 'basilosaurus';
-    return expect(getFirstAudio(word, 'yahoo')).to.be.rejectedWith(Error);
+    return checkAudioAndFile('basilosaurus.mp3', word);
   });
 
   it('testing (from google)', function () {
