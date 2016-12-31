@@ -9,8 +9,6 @@ const child    = require('child_process');
 const getAudio = require('./getAudio');
 const pkg      = require('../package.json');
 
-let config = require('../config.json');
-
 function exec (command) {
   return new Promise((resolve, reject) => {
     child.exec(command, (err, stdout, stderr) => {
@@ -24,15 +22,13 @@ function exec (command) {
 }
 
 function list () {
-  for (const key in config) {
-    console.log(`${key}: "${config[key]}"`);
-  }
+  console.log(JSON.stringify(pkg.config, null, 2));
 }
 
 function save () {
   fs.writeFileSync(
-    path.resolve(__dirname, '../config.json'),
-    JSON.stringify(config, null, 2) + '\n'
+    path.resolve(__dirname, '../package.json'),
+    JSON.stringify(pkg, null, 2) + '\n'
   );
   list();
 }
@@ -41,7 +37,7 @@ function reset () {
   switch (process.platform) {
     // Windows
     case 'win32':
-      config = {
+      pkg.config = {
         directory: path.resolve(process.env.USERPROFILE, 'vocabulary'),
         audio_cli: path.resolve(__dirname, '../dlcplayer/dlc') + ' -p'
       };
@@ -49,7 +45,7 @@ function reset () {
 
     // MacOS
     case 'darwin':
-      config = {
+      pkg.config = {
         directory: path.resolve(process.env.HOME, 'vocabulary'),
         audio_cli: 'afplay'
       };
@@ -57,7 +53,7 @@ function reset () {
 
     // UNIX
     default:
-      config = {
+      pkg.config = {
         directory: path.resolve(process.env.HOME, 'vocabulary'),
         audio_cli: 'mpg123 -q'
       };
@@ -67,18 +63,18 @@ function reset () {
 }
 
 function setAudioCli (cli) {
-  config.audio_cli = cli;
+  pkg.config.audio_cli = cli;
   save();
 }
 
 function setAudioDirectory (path) {
-  config.directory = path;
+  pkg.config.directory = path;
   save();
 }
 
 module.exports = _async_(function * (process_argv) {
   // 1. init config
-  if (config.directory === '') {
+  if (pkg.config.directory === '') {
     reset();
   }
 
@@ -106,7 +102,7 @@ module.exports = _async_(function * (process_argv) {
 
   // 3. create directory
   try {
-    fs.mkdirSync(config.directory);
+    fs.mkdirSync(pkg.config.directory);
   } catch(e) {
     if (e.code !== 'EEXIST') throw e;
   }
@@ -133,12 +129,12 @@ module.exports = _async_(function * (process_argv) {
 
     // 5-2. get audio list and play them
     try {
-      const audioList = yield getAudio(word, config.directory, service);
+      const audioList = yield getAudio(word, pkg.config.directory, service);
 
       for (let j = 0; j < audioList.length; j++) {
         const audio = audioList[j];
         console.log(`play '${path.basename(audio)}' ...`);
-        yield exec(`${config.audio_cli} "${audio}"`);
+        yield exec(`${pkg.config.audio_cli} "${audio}"`);
       }
 
     } catch (e) {

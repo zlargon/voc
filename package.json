@@ -7,6 +7,10 @@
   "bin": {
     "voc": "bin/index.js"
   },
+  "config": {
+    "directory": "",
+    "audio_cli": ""
+  },
   "scripts": {
     "prepublish": "npm run compile",
     "compile": "babel src --out-dir bin",
