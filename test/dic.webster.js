@@ -41,13 +41,13 @@ describe('dic.webster', function() {
 
   it('artesian well', function () {
     var word = 'artesian well';
-    var url = 'http://media.merriam-webster.com/audio/prons/en/us/mp3/a/artesi01.mp3';
+    var url = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/a/artesi01.mp3';
     return expect(webster(word)).to.eventually.equal(url);
   });
 
   it('projectable (not from title)', function () {
     var word = 'projectable';
-    var url = 'http://media.merriam-webster.com/audio/prons/en/us/mp3/p/projec03.mp3';
+    var url = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/p/projec03.mp3';
     return expect(webster(word)).to.eventually.equal(url);
   });
 

@@ -4,7 +4,7 @@ const fetch     = require('node-fetch');
 const cheerio   = require('cheerio');
 const normalize = require('../lib/normalize');
 const urlformat = require('url').format;
-const HOST      = 'http://www.collinsdictionary.com';
+const HOST      = 'https://www.collinsdictionary.com';
 
 // 1. search word
 const isWordExist = _async_(function * (word) {

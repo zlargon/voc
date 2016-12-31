@@ -71,6 +71,11 @@ describe('Get Audio', function() {
     return checkAudioAndFile('basilosaurus.mp3', word);
   });
 
+  it('home schooling (from collins)', function () {
+    var word = 'home schooling';
+    return checkAudioAndFile('home_schooling.mp3', word, 'collins');
+  });
+
   it('testing (from google)', function () {
     var word = 'testing';
     return checkAudioAndFile('testing.mp3', word, 'google');

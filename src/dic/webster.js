@@ -7,7 +7,7 @@ const normalize = require('../lib/normalize');
 module.exports = _async_(function * (word) {
   word = normalize(word);
 
-  const url = 'http://www.merriam-webster.com/dictionary/' + word;
+  const url = 'https://www.merriam-webster.com/dictionary/' + word;
   const res = yield fetch(url, { timeout: 10 * 1000 });
   if (res.status !== 200) {
     const err = new Error(`'${word}' is not found from webster`);
@@ -24,7 +24,7 @@ module.exports = _async_(function * (word) {
     const lang = ele.attr('data-lang').replace(/_/g, '/');
     const dir  = ele.attr('data-dir');
     const file = ele.attr('data-file');
-    const audio = `http://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`;
+    const audio = `https://media.merriam-webster.com/audio/prons/${lang}/mp3/${dir}/${file}.mp3`;
     if (word === term) {
       set[audio] = true;
     }

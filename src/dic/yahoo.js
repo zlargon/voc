@@ -8,7 +8,7 @@ const urlformat = require('url').format;
 module.exports = _async_(function * (word) {
   word = normalize(word);
 
-  const url = 'http://tw.dictionary.search.yahoo.com/search' + urlformat({
+  const url = 'https://tw.dictionary.search.yahoo.com/search' + urlformat({
     query: {
       fr2: 'dict',
       p: word
