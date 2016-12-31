@@ -43,7 +43,7 @@ function reset () {
     case 'win32':
       config = {
         directory: path.resolve(process.env.USERPROFILE, 'vocabulary'),
-        audio_cli: 'dlc -p'
+        audio_cli: path.resolve(__dirname, '../dlcplayer/dlc') + ' -p'
       };
       break;
 

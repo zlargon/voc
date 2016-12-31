@@ -4,5 +4,5 @@ appveyor.yml
 .travis.yml
 .babelrc
 .eslintrc
-.dlcplayer.zip
+dlcplayer.zip
 CHANGELOG.md
