@@ -81,6 +81,8 @@ $ voc "Hello World" -i   # download hello_world.mp3 from ispeech service
 
   https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/afplay.1.html
 
+  - `afplay` is build-in command line on macOS; you don't have to do anything for it.
+
 * __UNIX :__ `mpg123`
 
   http://www.mpg123.de/
@@ -93,7 +95,8 @@ $ sudo apt-get install mpg123
 
   http://dlcplayer.jimdo.com/
 
-  - original download link has died, but you still can download from [here](https://github.com/zlargon/voc/raw/master/dlcplayer.zip).
+  - `dlc` is build-in now, so you don't have to install command line by self.
+  - You still can download dlcplayer from [here](https://github.com/zlargon/voc/raw/master/dlcplayer.zip) if you want.
 
 ## Configuration
 

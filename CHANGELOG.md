@@ -1,3 +1,8 @@
+## 1.8.5 (Not yet to release)
+
+- using HTTPS for online dictionary webster, yahoo, and collins.
+- build in `dlc` command line for windows platform, so that users don't have to install command line by themselves.
+
 ## 1.8.4 (Dec 8, 2016)
 
 - add the rule for playing hole vocabulary speech group.
