@@ -1,4 +1,4 @@
-## 1.8.5 (Not yet to release)
+## 1.8.5 (Dec 31, 2016)
 
 - using HTTPS for online dictionary webster, yahoo, and collins.
 - build in `dlc` command line for windows platform, so that users don't have to install command line by themselves.
