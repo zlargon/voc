@@ -7,12 +7,12 @@
   "parser": "babel-eslint",
   "extends": "eslint:recommended",
   "parserOptions": {
-    "sourceType": "module"
+     "sourceType": "module"
   },
   "rules": {
-    "indent":          ["error", 2, {"SwitchCase": 1}],
-    "linebreak-style": ["error", "unix"],
-    "semi":            ["error", "always"],
-    "no-console":      ["off"]
+    "indent":           ["error", 2, {"SwitchCase": 1}],
+    "linebreak-style":  ["error", "unix"],
+    "semi":             ["error", "always"],
+    "no-console":       ["off"]
   }
 }
